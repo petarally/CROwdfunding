@@ -4,9 +4,10 @@
     </div>
     <div class="right-side">
       <form class="signup-form">
-        <h2>Registracija</h2>
+        <h2>Novi račun</h2>
+        <h3>Započnite svoju priču s nama</h3>
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">Korisničko ime</label>
           <input type="text" id="username" name="username" required>
         </div>
         <div class="form-group">
@@ -14,11 +15,12 @@
           <input type="email" id="email" name="email" required>
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">Lozinka</label>
           <input type="password" id="password" name="password" required>
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit">Izradi račun</button>
       </form>
+        <p id="prijava">Već imate račun? <a href="login">Prijava</a></p>
     </div>
   </div>
 </template>
@@ -28,7 +30,6 @@ export default {
   name: 'SignUpView',
   computed: {
     backgroundImageStyle() {
-      // Using require to ensure webpack correctly processes the file path
       return {
         backgroundImage: `url(${require('../assets/login.png')})`
       };
@@ -38,6 +39,23 @@ export default {
 </script>
 
 <style scoped>
+
+@media (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+  }
+
+  .left-side, .right-side {
+    flex: none;
+    width: 100%;
+  }
+
+  .left-side {
+    order: -1; 
+    background-size: cover;
+  }
+}
+
 .signup-container {
   display: flex;
   height: 100vh;
@@ -56,9 +74,41 @@ export default {
   background-position: center;
 }
 
+#prijava {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #B4B4B4;
+}
+
+.right-side{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .signup-form {
   max-width: 300px;
   width: 100%;
+  margin: 2rem 0;
+}
+
+.signup-form h2, h3 {
+  display: flex;
+  justify-content: start;
+  font-family: 'Poppins', sans-serif;
+}
+
+.signup-form h2 {
+  color: #FF7B00;
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.signup-form h3 {
+  color: #B4B4B4;
+  font-weight: light;
+  font-size: 1rem;
+  margin-bottom: 2rem;
 }
 
 .form-group {
@@ -68,6 +118,8 @@ export default {
 .form-group label {
   display: block;
   margin-bottom: 5px;
+  display: flex;
+  justify-content: start;
 }
 
 .form-group input {
@@ -82,12 +134,12 @@ button {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #7EB584;
   color: white;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #49704e;
 }
 </style>
