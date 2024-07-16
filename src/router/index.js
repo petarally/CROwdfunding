@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import HomeView from '../views/HomeView.vue'
 
 const routes = [
@@ -20,7 +21,10 @@ const routes = [
   {
     path: '/main',
     name: 'MainView',
-    component: () => import(/* webpackChunkName: "about" */ '../views/MainView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/MainView.vue'),
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
