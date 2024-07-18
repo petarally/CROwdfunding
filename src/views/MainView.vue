@@ -5,7 +5,9 @@
         <h2>Dobrodošli!</h2>
         <h3>Postavite ili pregledajte kampanje ovdje</h3>
       </div>
-      <button class="new-campaign-button">+ Nova kampanja</button>
+      <button class="new-campaign-button" @click="goToAddCampaign">
+        + Nova kampanja
+      </button>
     </div>
     <div class="listings-container">
       <ListingCard
@@ -39,6 +41,11 @@ import ListingCard from "@/components/ListingCard.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
 
 export default {
+  methods: {
+    goToAddCampaign() {
+      this.$router.push({ name: "AddCampaign" });
+    },
+  },
   components: {
     ListingCard,
     FooterComponent,

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import HomeView from "../views/HomeView.vue";
+import AddCampaignView from "../views/AddCampaignView.vue";
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     meta: {
       requiresAuth: false /* Tu treba promijeniti u true kasnije */,
     },
+  },
+  {
+    path: "/add-campaign",
+    name: "AddCampaign",
+    component: AddCampaignView,
   },
 ];
 

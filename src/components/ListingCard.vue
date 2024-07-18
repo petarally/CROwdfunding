@@ -1,12 +1,18 @@
 <template>
   <div class="card">
-    <img :src="campaignImage" alt="Campaign Image" class="campaign-image"/>
+    <img :src="campaignImage" alt="Campaign Image" class="campaign-image" />
     <div class="content">
-      <h2 class="campaign-name" @click="toggleName">{{ truncatedCampaignName }}</h2>
-      <p class="campaign-details" @click="toggleDetails">{{ truncatedCampaignDetails }}</p>
-      <hr/>
+      <h2 class="campaign-name" @click="toggleName">
+        {{ truncatedCampaignName }}
+      </h2>
+      <p class="campaign-details" @click="toggleDetails">
+        {{ truncatedCampaignDetails }}
+      </p>
+      <hr />
       <div class="funding-info">
-        <p>Traženi iznos: <strong>{{ moneyNeeded }} kn</strong></p>
+        <p>
+          Traženi iznos: <strong>{{ moneyNeeded }} kn</strong>
+        </p>
         <p>Preostalo dana: {{ daysLeft }}</p>
       </div>
       <button @click="openCampaignDetails">Sudjeluj</button>
@@ -16,13 +22,13 @@
 
 <script>
 export default {
-  name: 'ListingCard',
+  name: "ListingCard",
   props: {
     campaignImage: String,
     campaignName: String,
     campaignDetails: String,
     moneyNeeded: Number,
-    daysLeft: Number
+    daysLeft: Number,
   },
   data() {
     return {
@@ -35,14 +41,14 @@ export default {
       if (this.showFullCampaignName || this.campaignName.length < 50) {
         return this.campaignName;
       }
-      return this.campaignName.substring(0, 47) + '...';
+      return this.campaignName.substring(0, 47) + "...";
     },
     truncatedCampaignDetails() {
       if (this.showFullCampaignDetails || this.campaignDetails.length < 100) {
         return this.campaignDetails;
       }
-      return this.campaignDetails.substring(0, 97) + '...';
-    }
+      return this.campaignDetails.substring(0, 97) + "...";
+    },
   },
   methods: {
     toggleName() {
@@ -52,10 +58,10 @@ export default {
       this.showFullCampaignDetails = !this.showFullCampaignDetails;
     },
     openCampaignDetails() {
-      alert('Opening campaign details...');
-    }
-  }
-}
+      alert("Opening campaign details...");
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -67,20 +73,20 @@ export default {
   width: 300px;
   height: auto;
   margin: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-bottom: 4px solid #7CAA7C;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 4px solid #7caa7c;
   display: flex;
   flex-direction: column;
 
-  .campaign-image {  
-    width: 100%; 
+  .campaign-image {
+    width: 100%;
     height: 200px;
-    object-fit: cover; 
+    object-fit: cover;
   }
 
   .content {
     padding: 15px;
-    flex: 1; 
+    flex: 1;
 
     h2 {
       margin-top: 0;
@@ -101,21 +107,22 @@ export default {
       width: 100%;
       padding: 10px;
       border: none;
-      background-color: #D2E892;
-      color: #8CAA34;
+      background-color: #d2e892;
+      color: #8caa34;
       font-weight: bold;
       cursor: pointer;
       border-radius: 4px;
-      margin-top: auto; 
+      margin-top: auto;
 
       &:hover {
-        background-color: darken(#8CAA34, 5%);
-        color: #D2E892;
+        background-color: darken(#8caa34, 5%);
+        color: #d2e892;
       }
     }
   }
 
-  .campaign-name, .campaign-details {
+  .campaign-name,
+  .campaign-details {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -6,9 +6,11 @@ const firebaseConfig = {
   projectId: "crowdfunding-44df5",
   storageBucket: "crowdfunding-44df5.appspot.com",
   messagingSenderId: "96077735636",
-  appId: "1:96077735636:web:b519c42a71e299f23efd41"
+  appId: "1:96077735636:web:b519c42a71e299f23efd41",
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-export default firebaseApp;
+let db = firebaseApp.firestore();
+
+export default { firebaseApp, db };
