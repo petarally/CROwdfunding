@@ -85,6 +85,8 @@ export default {
   }
 
   .content {
+    display: flex;
+    flex-direction: column;
     padding: 15px;
     flex: 1;
 

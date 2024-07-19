@@ -1,55 +1,101 @@
 <template>
   <div class="add-campaign">
-    <h2>Nova kampanja</h2>
-    <h3>Stvorite novu kampanju</h3>
-    <hr />
-    <form @submit.prevent="submitCampaign">
-      <div class="form-group">
-        <input
-          placeholder="Dodajte naslovnu fotografiju"
-          type="text"
-          id="campaignImage"
-          v-model="campaign.campaignImage"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <input
-          placeholder="Unesite naziv kampanje"
-          type="text"
-          id="campaignName"
-          v-model="campaign.campaignName"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <textarea
-          placeholder="Unesite kratki opis kampanje"
-          id="campaignDetails"
-          v-model="campaign.campaignDetails"
-          required
-        ></textarea>
-      </div>
-      <div class="form-group">
-        <input
-          placeholder="Potreban iznos"
-          type="text"
-          id="moneyNeeded"
-          v-model.number="campaign.moneyNeeded"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <input
-          placeholder="Trajanje kampanje u danima"
-          type="text"
-          id="daysLeft"
-          v-model.number="campaign.daysLeft"
-          required
-        />
-      </div>
-      <button type="submit">Objavi</button>
-    </form>
+    <div class="content-add-campaign">
+      <h2>Nova kampanja</h2>
+      <h3>Stvorite novu kampanju</h3>
+      <hr />
+      <form @submit.prevent="submitCampaign">
+        <div class="naziv-kategorija">
+          <div class="form-group">
+            <input
+              placeholder="Unesite naziv kampanje"
+              type="text"
+              id="campaignName"
+              v-model="campaign.campaignName"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <select id="campaignCategory" v-model="campaign.category" required>
+              <option disabled value="">Unesite kategoriju</option>
+              <option value="health">Health</option>
+              <option value="education">Education</option>
+              <option value="environment">Environment</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <textarea
+            placeholder="Unesite kratki opis kampanje"
+            id="campaignDetails"
+            v-model="campaign.campaignDetails"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group image-upload-container">
+          <label for="campaignImage" class="image-upload-label">
+            <i class="fas fa-upload"></i> Dodajte naslovnu fotografiju
+          </label>
+          <input
+            type="file"
+            id="campaignImage"
+            @change="handleImageUpload"
+            hidden
+          />
+        </div>
+        <div class="tasks">
+          <h3>Popis zadataka i nagrada za kampanju</h3>
+          <div class="zadatak-cijena">
+            <div
+              v-for="zadatak in zadaciCijene"
+              :key="zadatak.id"
+              class="zadatak-cijena-item"
+            >
+              <input v-model="zadatak.opis" type="text" placeholder="Zadatak" />
+              <input
+                v-model="zadatak.cijena"
+                type="text"
+                placeholder="Cijena zadatka"
+              />
+            </div>
+          </div>
+          <div class="btn-new-task">
+            <button class="add-new-task" @click="addNewZadatakCijena">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <input
+            placeholder="Potreban iznos"
+            type="text"
+            id="moneyNeeded"
+            v-model.number="campaign.moneyNeeded"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <input
+            placeholder="Trajanje kampanje (u danima)"
+            type="text"
+            id="daysLeft"
+            v-model.number="campaign.daysLeft"
+            required
+          />
+        </div>
+        <hr />
+        <div class="form-group">
+          <input
+            placeholder="Početni ulog"
+            type="text"
+            id="moneyNeeded"
+            v-model.number="campaign.starterMoney"
+            required
+          />
+        </div>
+        <button type="submit">Objavi</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -64,10 +110,18 @@ export default {
         campaignDetails: "",
         moneyNeeded: "",
         daysLeft: "",
+        category: "",
+        starterMoney: "",
       },
+      zadaciCijene: [{ id: 1, opis: "", cijena: "" }],
+      nextId: 2,
     };
   },
   methods: {
+    addNewZadatakCijena() {
+      this.zadaciCijene.push({ id: this.nextId, opis: "", cijena: "" });
+      this.nextId++;
+    },
     submitCampaign() {
       console.log("Submitting campaign:", this.campaign);
       alert("Campaign added successfully!");
@@ -80,6 +134,7 @@ export default {
         campaignDetails: "",
         moneyNeeded: 0,
         daysLeft: 0,
+        starterMoney: 0,
       };
     },
   },
@@ -88,12 +143,18 @@ export default {
 
 <style scoped>
 .add-campaign {
-  max-width: 500px;
-  margin: auto;
+  max-width: 80%;
+  margin: 4rem auto;
   padding: 20px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: white;
+}
+
+.content-add-campaign {
+  max-width: 90%;
+  margin: auto;
+  padding: 2rem 0;
 }
 
 .add-campaign h2,
@@ -115,7 +176,14 @@ h3 {
   font-size: 1rem;
 }
 
+.naziv-kategorija {
+  display: flex;
+  justify-content: space-between;
+}
+
 .form-group {
+  flex: 1;
+  margin: 0 10px;
   margin-bottom: 20px;
 }
 
@@ -124,23 +192,45 @@ h3 {
   margin-bottom: 5px;
 }
 
+#campaignCategory {
+  height: 44px;
+}
+
 input,
-textarea {
+textarea,
+select {
   background: #fbfdff;
 }
 
 input::placeholder,
-textarea::placeholder {
+textarea::placeholder,
+select {
   color: #7eb584;
 }
 
 .form-group input[type="text"],
 .form-group input[type="number"],
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 10px;
   border: 1.6px solid #d7d7d7;
   border-radius: 4px;
+}
+
+.image-upload-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: #fbfdff;
+  border: 1.6px solid #d7d7d7;
+  border-radius: 4px;
+  padding: 20px;
+  color: #7eb584;
+}
+
+.image-upload-label i {
+  margin-right: 10px;
 }
 
 button {
@@ -155,5 +245,74 @@ button {
 
 button:hover {
   background-color: #49704e;
+}
+
+.tasks {
+  padding: 1rem 0;
+  background: #f0f8f1;
+  margin: 1rem 0;
+}
+
+.tasks h3 {
+  padding-left: 1rem;
+  color: #ff7b00;
+  font-weight: bold;
+  padding-bottom: 1rem;
+}
+
+.zadatak-cijena {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.zadatak-cijena-item {
+  display: flex;
+  width: 90%;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .zadatak-cijena-item {
+    flex-direction: column; /* Stack vertically on small screens */
+  }
+}
+
+.zadatak-cijena-item input {
+  flex: 1;
+  padding: 5px;
+  border: 1.6px solid #d7d7d7;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.btn-new-task {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem;
+}
+
+.add-new-task {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  color: #ff7b00;
+  border: 1px solid #ff7b00;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.add-new-task i {
+  margin: 0;
+}
+
+.add-new-task:hover {
+  background: #ff7b00;
+  color: #f0f8f1;
 }
 </style>

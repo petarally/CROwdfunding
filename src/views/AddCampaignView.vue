@@ -41,4 +41,13 @@ export default {
 .right-side {
   flex: 1;
 }
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+  .left-side {
+    order: -1;
+  }
+}
 </style>
