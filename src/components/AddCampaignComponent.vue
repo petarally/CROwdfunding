@@ -42,6 +42,11 @@
             @change="handleImageUpload"
             hidden
           />
+          <progress
+            v-if="isUploading"
+            :value="uploadProgress"
+            max="100"
+          ></progress>
         </div>
         <div class="tasks">
           <h3>Popis zadataka i nagrada za kampanju</h3>
@@ -100,41 +105,107 @@
 </template>
 
 <script>
+import { db } from "@/firebase";
+import { collection, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
 export default {
   name: "AddCampaignComponent",
   data() {
     return {
       campaign: {
-        campaignImage: "",
+        campaignImage: null,
+        uploadProgress: 0,
+        isUploading: false,
         campaignName: "",
         campaignDetails: "",
         moneyNeeded: "",
         daysLeft: "",
         category: "",
         starterMoney: "",
+        userID: null,
       },
       zadaciCijene: [{ id: 1, opis: "", cijena: "" }],
       nextId: 2,
     };
   },
   methods: {
+    async handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) {
+        console.error("No file selected.");
+        return;
+      }
+      this.campaign.isUploading = true;
+      const storage = getStorage();
+      const storageRef = ref(storage, `campaignImages/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          this.campaign.uploadProgress = progress;
+        },
+        (error) => {
+          console.error("Upload failed", error);
+          this.campaign.isUploading = false;
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            this.campaign.campaignImage = downloadURL;
+            this.campaign.isUploading = false;
+          });
+        }
+      );
+    },
     addNewZadatakCijena() {
       this.zadaciCijene.push({ id: this.nextId, opis: "", cijena: "" });
       this.nextId++;
     },
-    submitCampaign() {
-      console.log("Submitting campaign:", this.campaign);
-      alert("Campaign added successfully!");
-      this.resetForm();
+    async submitCampaign() {
+      if (this.campaign.isUploading) {
+        console.error("Wait for the image to finish uploading.");
+        return;
+      }
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user !== null) {
+        this.campaign.userUID = user.uid;
+      } else {
+        console.error("No authenticated user found.");
+        return;
+      }
+      try {
+        const docRef = await addDoc(collection(db, "campaigns"), this.campaign);
+        console.log("Document written with ID: ", docRef.id);
+        this.resetForm();
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    },
+    resetForm() {
+      this.campaign = { title: "", description: "", goal: 0 };
     },
     resetForm() {
       this.campaign = {
-        campaignImage: "",
+        campaignImage: null,
+        uploadProgress: 0,
+        isUploading: false,
         campaignName: "",
         campaignDetails: "",
-        moneyNeeded: 0,
-        daysLeft: 0,
-        starterMoney: 0,
+        moneyNeeded: "",
+        daysLeft: "",
+        category: "",
+        starterMoney: "",
+        userID: null,
       };
     },
   },
