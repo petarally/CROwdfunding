@@ -56,7 +56,11 @@
               :key="zadatak.id"
               class="zadatak-cijena-item"
             >
-              <input v-model="zadatak.opis" type="text" placeholder="Zadatak" />
+              <input
+                v-model="zadatak.zadatak"
+                type="text"
+                placeholder="Zadatak"
+              />
               <input
                 v-model="zadatak.cijena"
                 type="text"
@@ -65,7 +69,11 @@
             </div>
           </div>
           <div class="btn-new-task">
-            <button class="add-new-task" @click="addNewZadatakCijena">
+            <button
+              class="add-new-task"
+              @click="addNewZadatakCijena"
+              type="button"
+            >
               <i class="fas fa-plus"></i>
             </button>
           </div>
@@ -93,7 +101,7 @@
           <input
             placeholder="Početni ulog"
             type="text"
-            id="moneyNeeded"
+            id="starterMoney"
             v-model.number="campaign.starterMoney"
             required
           />
@@ -121,8 +129,6 @@ export default {
     return {
       campaign: {
         campaignImage: null,
-        uploadProgress: 0,
-        isUploading: false,
         campaignName: "",
         campaignDetails: "",
         moneyNeeded: "",
@@ -130,9 +136,11 @@ export default {
         category: "",
         starterMoney: "",
         userID: null,
+        zadaciCijene: [], // Added zadaciCijene to campaign object
       },
-      zadaciCijene: [{ id: 1, opis: "", cijena: "" }],
-      nextId: 2,
+      zadaciCijene: [],
+      uploadProgress: 0,
+      isUploading: false,
     };
   },
   methods: {
@@ -142,7 +150,7 @@ export default {
         console.error("No file selected.");
         return;
       }
-      this.campaign.isUploading = true;
+      this.isUploading = true;
       const storage = getStorage();
       const storageRef = ref(storage, `campaignImages/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -152,26 +160,34 @@ export default {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          this.campaign.uploadProgress = progress;
+          this.uploadProgress = progress;
         },
         (error) => {
           console.error("Upload failed", error);
-          this.campaign.isUploading = false;
+          this.isUploading = false;
         },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             this.campaign.campaignImage = downloadURL;
-            this.campaign.isUploading = false;
-          });
+            this.isUploading = false;
+          } catch (error) {
+            console.error("Failed to get download URL", error);
+            this.isUploading = false;
+          }
         }
       );
     },
     addNewZadatakCijena() {
-      this.zadaciCijene.push({ id: this.nextId, opis: "", cijena: "" });
-      this.nextId++;
+      const newId = Date.now(); // Using the current timestamp as a unique ID
+      this.zadaciCijene.push({
+        id: newId,
+        zadatak: "",
+        cijena: "",
+      });
     },
     async submitCampaign() {
-      if (this.campaign.isUploading) {
+      if (this.isUploading) {
         console.error("Wait for the image to finish uploading.");
         return;
       }
@@ -183,6 +199,8 @@ export default {
         console.error("No authenticated user found.");
         return;
       }
+      // Include zadaciCijene in the campaign object
+      this.campaign.zadaciCijene = this.zadaciCijene;
       try {
         const docRef = await addDoc(collection(db, "campaigns"), this.campaign);
         console.log("Document written with ID: ", docRef.id);
@@ -192,13 +210,8 @@ export default {
       }
     },
     resetForm() {
-      this.campaign = { title: "", description: "", goal: 0 };
-    },
-    resetForm() {
       this.campaign = {
         campaignImage: null,
-        uploadProgress: 0,
-        isUploading: false,
         campaignName: "",
         campaignDetails: "",
         moneyNeeded: "",
@@ -206,7 +219,11 @@ export default {
         category: "",
         starterMoney: "",
         userID: null,
+        zadaciCijene: [], // Reset zadaciCijene in campaign object
       };
+      this.zadaciCijene = [];
+      this.uploadProgress = 0;
+      this.isUploading = false;
     },
   },
 };
