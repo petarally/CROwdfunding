@@ -1,5 +1,6 @@
 <template>
   <div class="main-view">
+    <Navbar />
     <div class="button-container">
       <div class="dobrodoslica">
         <h2>Dobrodošli!</h2>
@@ -26,6 +27,7 @@
 
 <script>
 import ListingCard from "@/components/ListingCard.vue";
+import Navbar from "@/components/NavbarComponent.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { firebaseApp } from "@/firebase.js";
@@ -54,6 +56,7 @@ export default {
   components: {
     ListingCard,
     FooterComponent,
+    Navbar,
   },
   mounted() {
     this.fetchCampaigns();
@@ -71,17 +74,28 @@ export default {
   background: #f0f8f1;
 }
 
+.listing-card {
+  transform: scale(0.9);
+}
+
 .button-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  width: 100%;
+  padding: 2rem 5rem;
+  background-color: #f0f8f1;
+  border-bottom: 1px solid #7eb584;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
 }
 
 .dobrodoslica {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
+  color: #314f35;
 }
 
 .left-side-text {
@@ -104,10 +118,33 @@ export default {
 
 .listings-container {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 2rem 5rem;
+}
+
+@media (max-width: 1200px) {
+  .listings-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .listings-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .listings-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .listings-container {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div class="add-campaign-container">
+    <Navbar />
     <div class="content">
       <div class="right-side">
         <h2 class="title-h2">Vaše kampanje</h2>
@@ -32,12 +33,14 @@ import FooterComponent from "@/components/FooterComponent.vue";
 import { db, auth } from "@/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import ListingCard from "@/components/ListingCard.vue";
+import Navbar from "@/components/NavbarComponent.vue";
 
 export default {
   components: {
     AddCampaignComponent,
     FooterComponent,
     ListingCard,
+    Navbar,
   },
   data() {
     return {
@@ -118,15 +121,14 @@ export default {
   justify-content: start;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
-  padding: 1rem 2rem;
+  padding: 1.5rem 5rem;
 }
 
 .listings-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
   justify-content: center;
-  padding: 16px;
+  padding: 1rem 5rem;
 }
 
 .listing-card {
