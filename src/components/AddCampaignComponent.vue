@@ -47,6 +47,9 @@
             :value="uploadProgress"
             max="100"
           ></progress>
+          <div v-if="campaign.campaignImage">
+            <img :src="campaign.campaignImage" alt="Campaign Image" />
+          </div>
         </div>
         <div class="tasks">
           <h3>Popis zadataka i nagrada za kampanju</h3>
@@ -111,7 +114,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { db } from "@/firebase";
 import { collection, addDoc } from "firebase/firestore";
@@ -136,7 +138,7 @@ export default {
         category: "",
         starterMoney: "",
         userID: null,
-        zadaciCijene: [], // Added zadaciCijene to campaign object
+        zadaciCijene: [],
       },
       zadaciCijene: [],
       uploadProgress: 0,
@@ -161,6 +163,7 @@ export default {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           this.uploadProgress = progress;
+          console.log(`Upload is ${progress}% done`);
         },
         (error) => {
           console.error("Upload failed", error);
@@ -170,6 +173,7 @@ export default {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             this.campaign.campaignImage = downloadURL;
+            console.log("File available at", downloadURL);
             this.isUploading = false;
           } catch (error) {
             console.error("Failed to get download URL", error);
@@ -179,7 +183,7 @@ export default {
       );
     },
     addNewZadatakCijena() {
-      const newId = Date.now(); // Using the current timestamp as a unique ID
+      const newId = Date.now();
       this.zadaciCijene.push({
         id: newId,
         zadatak: "",
@@ -199,7 +203,6 @@ export default {
         console.error("No authenticated user found.");
         return;
       }
-      // Include zadaciCijene in the campaign object
       this.campaign.zadaciCijene = this.zadaciCijene;
       try {
         const docRef = await addDoc(collection(db, "campaigns"), this.campaign);
@@ -219,7 +222,7 @@ export default {
         category: "",
         starterMoney: "",
         userID: null,
-        zadaciCijene: [], // Reset zadaciCijene in campaign object
+        zadaciCijene: [],
       };
       this.zadaciCijene = [];
       this.uploadProgress = 0;
@@ -363,7 +366,7 @@ button:hover {
 
 @media (max-width: 600px) {
   .zadatak-cijena-item {
-    flex-direction: column; /* Stack vertically on small screens */
+    flex-direction: column;
   }
 }
 

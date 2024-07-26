@@ -11,25 +11,13 @@
     </div>
     <div class="listings-container">
       <ListingCard
-        :campaignImage="require('@/assets/listing_img_test_1.jpg')"
-        :campaignName="'Naziv kampanje'"
-        :campaignDetails="'Opis kampanje'"
-        :moneyNeeded="700"
-        :daysLeft="184"
-      />
-      <ListingCard
-        :campaignImage="require('@/assets/listing_img_test_2.jpg')"
-        :campaignName="'Naziv kampanje'"
-        :campaignDetails="'Opis kampanje'"
-        :moneyNeeded="700"
-        :daysLeft="184"
-      />
-      <ListingCard
-        :campaignImage="require('@/assets/listing_img_test_3.jpg')"
-        :campaignName="'Naziv kampanje'"
-        :campaignDetails="'Opis kampanje'"
-        :moneyNeeded="700"
-        :daysLeft="184"
+        v-for="campaign in campaigns"
+        :key="campaign.id"
+        :campaignImage="campaign.campaignImage"
+        :campaignName="campaign.campaignName"
+        :campaignDetails="campaign.campaignDetails"
+        :moneyNeeded="campaign.moneyNeeded"
+        :daysLeft="campaign.daysLeft"
       />
     </div>
     <FooterComponent />
@@ -39,16 +27,36 @@
 <script>
 import ListingCard from "@/components/ListingCard.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { firebaseApp } from "@/firebase.js";
 
 export default {
+  data() {
+    return {
+      campaigns: [],
+    };
+  },
   methods: {
     goToAddCampaign() {
       this.$router.push({ name: "AddCampaign" });
+    },
+    async fetchCampaigns() {
+      const db = getFirestore(firebaseApp);
+      const campaignsCol = collection(db, "campaigns");
+      const campaignSnapshot = await getDocs(campaignsCol);
+      const campaignList = campaignSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      this.campaigns = campaignList;
     },
   },
   components: {
     ListingCard,
     FooterComponent,
+  },
+  mounted() {
+    this.fetchCampaigns();
   },
 };
 </script>

@@ -2,12 +2,20 @@
   <div class="add-campaign-container">
     <div class="content">
       <div class="right-side">
-        <div class="campaigns-container">
+        <h2 class="title-h2">Vaše kampanje</h2>
+        <hr />
+        <div class="listings-container">
           <ListingCard
             v-for="campaign in campaigns"
             :key="campaign.id"
-            :campaign="campaign"
+            :campaignImage="campaign.campaignImage"
+            :campaignName="campaign.campaignName"
+            :campaignDetails="campaign.campaignDetails"
+            :moneyNeeded="campaign.moneyNeeded"
+            :daysLeft="campaign.daysLeft"
+            class="listing-card"
           />
+          <div v-if="campaigns.length === 0">No campaigns found.</div>
         </div>
       </div>
       <div class="left-side">
@@ -43,44 +51,46 @@ export default {
         console.error("currentUserId is undefined");
         return;
       }
-      const campaignsCollection = collection(db, "campaigns");
-      const q = query(
-        campaignsCollection,
-        where("userId", "==", this.currentUserId)
-      );
-      const querySnapshot = await getDocs(q);
-      this.campaigns = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      try {
+        const campaignsCollection = collection(db, "campaigns");
+        const q = query(
+          campaignsCollection,
+          where("userUID", "==", this.currentUserId)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          console.warn("No matching documents.");
+        } else {
+          console.log("Found campaigns:", querySnapshot.docs);
+        }
+
+        this.campaigns = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        console.log("Mapped campaigns:", this.campaigns); // Debugging line
+      } catch (error) {
+        console.error("Error fetching campaigns:", error);
+      }
     },
   },
   mounted() {
-    if (auth.currentUser) {
-      this.currentUserId = auth.currentUser.uid;
-      console.log("Current User ID:", this.currentUserId); // Debugging line
-      this.fetchCampaigns();
-    } else {
-      console.error("No user is currently logged in.");
-    }
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.currentUserId = user.uid;
+        console.log("Current User ID:", this.currentUserId); // Debugging line
+        this.fetchCampaigns();
+      } else {
+        console.error("No user is currently logged in.");
+      }
+    });
   },
-
-  async fetchCampaigns() {
-    if (!this.currentUserId) {
-      console.error("currentUserId is undefined");
-      return;
-    }
-    const campaignsCollection = collection(db, "campaigns");
-    const q = query(
-      campaignsCollection,
-      where("userId", "==", this.currentUserId)
-    );
-    const querySnapshot = await getDocs(q);
-    this.campaigns = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    console.log("Fetched campaigns:", this.campaigns); // Debugging line
+  watch: {
+    campaigns(newCampaigns) {
+      console.log("Campaigns data updated:", newCampaigns);
+    },
   },
 };
 </script>
@@ -103,12 +113,42 @@ export default {
   flex: 1;
 }
 
+.title-h2 {
+  display: flex;
+  justify-content: start;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  padding: 1rem 2rem;
+}
+
+.listings-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  justify-content: center;
+  padding: 16px;
+}
+
+.listing-card {
+  transform: scale(0.9);
+}
+
 @media (max-width: 768px) {
   .content {
     flex-direction: column;
   }
   .left-side {
     order: -1;
+  }
+
+  .title-h2 {
+    display: flex;
+    justify-content: center;
+  }
+
+  .listings-container {
+    grid-template-columns: 1fr;
+    justify-items: center;
   }
 }
 </style>

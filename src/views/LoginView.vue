@@ -7,17 +7,35 @@
         <h3>Dobrodošli natrag</h3>
         <div class="form-group">
           <label for="username">Korisničko ime</label>
-          <input type="text" id="username" name="username" required />
+          <input
+            type="text"
+            v-model="username"
+            id="username"
+            name="username"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required />
+          <input
+            type="email"
+            v-model="email"
+            id="email"
+            name="email"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="password">Lozinka</label>
-          <input type="password" id="password" name="password" required />
+          <input
+            type="password"
+            v-model="password"
+            id="password"
+            name="password"
+            required
+          />
         </div>
-        <button type="submit">Prijava</button>
+        <button type="button">Prijava</button>
         <button @click="googleSignIn" class="google-prijava">
           <div class="gsi-material-button-icon">
             <svg
@@ -59,6 +77,13 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default {
   name: "LoginView",
+  data() {
+    return {
+      username: "",
+      email: "",
+      password: "",
+    };
+  },
   computed: {
     backgroundImageStyle() {
       return {
@@ -67,6 +92,9 @@ export default {
     },
   },
   methods: {
+    login() {
+      console.log("Login");
+    },
     googleSignIn() {
       const auth = getAuth(firebaseApp);
       const provider = new GoogleAuthProvider();
