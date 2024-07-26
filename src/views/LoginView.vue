@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="left-side" :style="backgroundImageStyle"></div>
     <div class="right-side">
-      <form class="login-form">
+      <form class="login-form" @submit.prevent="login">
         <h2>Prijava</h2>
         <h3>Dobrodošli natrag</h3>
         <div class="form-group">
@@ -35,8 +35,8 @@
             required
           />
         </div>
-        <button type="button">Prijava</button>
-        <button @click="googleSignIn" class="google-prijava">
+        <button type="submit">Prijava</button>
+        <button @click.prevent="googleSignIn" class="google-prijava">
           <div class="gsi-material-button-icon">
             <svg
               version="1.1"
@@ -73,7 +73,13 @@
 
 <script>
 import firebaseApp from "@/firebase.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 export default {
   name: "LoginView",
@@ -92,19 +98,56 @@ export default {
     },
   },
   methods: {
-    login() {
-      console.log("Login");
+    async login() {
+      const auth = getAuth(firebaseApp);
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          this.email,
+          this.password
+        );
+        const user = userCredential.user;
+
+        const db = getFirestore(firebaseApp);
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+
+        if (userDoc.exists()) {
+          this.username = userDoc.data().username;
+        }
+
+        console.log("User logged in successfully, redirecting to MainView...");
+        this.$router.push({ name: "MainView" });
+      } catch (error) {
+        console.error("Login error:", error.message);
+      }
     },
-    googleSignIn() {
+    async googleSignIn() {
       const auth = getAuth(firebaseApp);
       const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider)
-        .then(() => {
-          this.$router.push({ name: "MainView" });
-        })
-        .catch((error) => {
-          console.error("Sign-in error", error);
-        });
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        const db = getFirestore(firebaseApp);
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+
+        if (userDoc.exists()) {
+          this.username = userDoc.data().username;
+        } else {
+          const email = user.email;
+          const username = email.split("@")[0];
+          await setDoc(doc(db, "users", user.uid), {
+            username,
+            email,
+          });
+          this.username = username;
+        }
+
+        console.log("Google sign-in successful, redirecting to MainView...");
+        this.$router.push({ name: "MainView" });
+      } catch (error) {
+        console.error("Sign-in error", error.message);
+      }
     },
   },
 };

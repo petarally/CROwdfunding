@@ -6,7 +6,7 @@ import AddCampaignView from "../views/AddCampaignView.vue";
 const routes = [
   {
     path: "/",
-    name: "home",
+    name: "HomeView",
     component: HomeView,
   },
   {

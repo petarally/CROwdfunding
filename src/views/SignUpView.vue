@@ -104,6 +104,15 @@ export default {
       const provider = new GoogleAuthProvider();
       try {
         const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const db = getFirestore(firebaseApp);
+        const email = user.email;
+        const username = email.split("@")[0];
+        await setDoc(doc(db, "users", user.uid), {
+          username: username,
+          email: email,
+        });
+        console.log("User signed in with Google:", user);
         this.$router.push("/main");
       } catch (error) {
         console.error("Google sign-in error:", error);
@@ -118,14 +127,16 @@ export default {
         );
         const user = userCredential.user;
         const db = getFirestore(firebaseApp);
-
+        const username = this.email.split("@")[0];
         await setDoc(doc(db, "users", user.uid), {
-          username: this.username,
+          username: this.username || username,
           email: this.email,
           password: this.password,
         });
         console.log("User created:", userCredential.user);
-        alert(`User "${this.username}" is successfully registered.`);
+        alert(
+          `User "${this.username || username}" is successfully registered.`
+        );
         this.$router.push({ name: "MainView" });
       } catch (error) {
         console.error("Signup error:", error.message);
