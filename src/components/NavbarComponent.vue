@@ -105,4 +105,11 @@ export default {
 .user-info button:hover {
   background-color: #cc6500;
 }
+
+@media (max-width: 768px) {
+  .user-info {
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+}
 </style>

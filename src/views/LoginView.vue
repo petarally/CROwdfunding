@@ -139,6 +139,7 @@ export default {
           await setDoc(doc(db, "users", user.uid), {
             username,
             email,
+            userStatus: 0,
           });
           this.username = username;
         }

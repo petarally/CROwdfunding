@@ -132,6 +132,7 @@ export default {
           username: this.username || username,
           email: this.email,
           password: this.password,
+          userStatus: 0,
         });
         console.log("User created:", userCredential.user);
         alert(

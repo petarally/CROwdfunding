@@ -2,7 +2,7 @@
   <div class="add-campaign-container">
     <Navbar />
     <div class="content">
-      <div class="right-side">
+      <div class="left-side">
         <h2 class="title-h2">Vaše kampanje</h2>
         <hr />
         <div class="listings-container">
@@ -19,7 +19,7 @@
           <div v-if="campaigns.length === 0">No campaigns found.</div>
         </div>
       </div>
-      <div class="left-side">
+      <div class="right-side">
         <AddCampaignComponent />
       </div>
     </div>
@@ -98,7 +98,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .add-campaign-container {
   display: flex;
   flex-direction: column;
@@ -109,11 +109,13 @@ export default {
 .content {
   flex: 1;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .left-side,
 .right-side {
   flex: 1;
+  padding: 1rem;
 }
 
 .title-h2 {
@@ -121,14 +123,14 @@ export default {
   justify-content: start;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
-  padding: 1.5rem 5rem;
+  padding: 1.5rem 4rem;
 }
 
 .listings-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  justify-content: center;
-  padding: 1rem 5rem;
+  gap: 20px;
+  padding: 0rem 2rem;
 }
 
 .listing-card {
@@ -139,8 +141,15 @@ export default {
   .content {
     flex-direction: column;
   }
+
   .left-side {
+    order: 1;
+  }
+
+  .right-side {
     order: -1;
+    width: 100%;
+    margin: 0 auto;
   }
 
   .title-h2 {

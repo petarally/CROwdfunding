@@ -2,7 +2,7 @@
   <div class="home">
     <div class="title">
       <h1><span>CRO</span>WDFUNDING</h1>
-      <a href="login">Prijava</a>
+      <a @click="redirectToLogin">Prijava</a>
     </div>
     <img alt="home" src="../assets/home.png" />
     <div class="home-text">
@@ -23,8 +23,11 @@
 export default {
   name: "HomeView",
   methods: {
+    redirectToLogin() {
+      this.$router.push({ name: "LoginView" });
+    },
     redirectToSignup() {
-      this.$router.push("/signup");
+      this.$router.push({ name: "SignUpView" });
     },
   },
 };
@@ -32,13 +35,16 @@ export default {
 
 <style scoped>
 .home {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   padding: 0 8rem;
+  box-sizing: border-box;
 }
 
 .title {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   margin: 4rem 0;
 }
 
@@ -47,21 +53,36 @@ export default {
 }
 
 .title h1 {
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   font-size: 2.5rem;
 }
 
 .title a {
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1.3rem;
   font-weight: bold;
   color: black;
   text-decoration: none;
+  cursor: pointer;
+}
+
+img {
+  flex-grow: 1;
+  max-height: 50%;
+  object-fit: contain;
+}
+
+.home-text {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .home-text p {
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1.3rem;
   font-weight: bold;
   padding: 2rem;
@@ -72,6 +93,7 @@ export default {
 }
 
 button {
+  align-self: center;
   width: 50%;
   padding: 20px;
   border: none;
@@ -123,6 +145,7 @@ button:hover {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
+    margin-bottom: 5rem;
   }
 }
 </style>
