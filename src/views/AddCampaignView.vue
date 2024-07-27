@@ -3,20 +3,24 @@
     <Navbar />
     <div class="content">
       <div class="left-side">
-        <h2 class="title-h2">Vaše kampanje</h2>
-        <hr />
-        <div class="listings-container">
-          <ListingCard
-            v-for="campaign in campaigns"
-            :key="campaign.id"
-            :campaignImage="campaign.campaignImage"
-            :campaignName="campaign.campaignName"
-            :campaignDetails="campaign.campaignDetails"
-            :moneyNeeded="campaign.moneyNeeded"
-            :daysLeft="campaign.daysLeft"
-            class="listing-card"
-          />
-          <div v-if="campaigns.length === 0">No campaigns found.</div>
+        <div class="title-container">
+          <h2 class="title-h2">Vaše kampanje</h2>
+          <hr />
+          <div class="listings-container">
+            <ListingCard
+              v-for="campaign in campaigns"
+              :key="campaign.id"
+              :campaignImage="campaign.campaignImage"
+              :campaignName="campaign.campaignName"
+              :campaignDetails="campaign.campaignDetails"
+              :moneyNeeded="campaign.moneyNeeded"
+              :daysLeft="campaign.daysLeft"
+              class="listing-card"
+            />
+            <div v-if="campaigns.length === 0" class="message">
+              Nemate niti jednu kampanju u svom portfelju.
+            </div>
+          </div>
         </div>
       </div>
       <div class="right-side">
@@ -135,6 +139,12 @@ export default {
 
 .listing-card {
   transform: scale(0.9);
+}
+
+.message {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  padding: 1rem;
 }
 
 @media (max-width: 768px) {

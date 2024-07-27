@@ -109,21 +109,17 @@
             required
           />
         </div>
-        <button type="submit">Objavi</button>
+        <button type="submit" :disabled="isUploading">Objavi</button>
       </form>
     </div>
   </div>
 </template>
+
 <script>
-import { db } from "@/firebase";
+import { db, auth, storage } from "@/firebase"; // Import storage
 import { collection, addDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export default {
   name: "AddCampaignComponent",
@@ -153,17 +149,16 @@ export default {
         return;
       }
       this.isUploading = true;
-      const storage = getStorage();
+      this.uploadProgress = 0;
+
       const storageRef = ref(storage, `campaignImages/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
+          this.uploadProgress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          this.uploadProgress = progress;
-          console.log(`Upload is ${progress}% done`);
         },
         (error) => {
           console.error("Upload failed", error);
@@ -173,7 +168,6 @@ export default {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             this.campaign.campaignImage = downloadURL;
-            console.log("File available at", downloadURL);
             this.isUploading = false;
           } catch (error) {
             console.error("Failed to get download URL", error);
@@ -195,9 +189,8 @@ export default {
         console.error("Wait for the image to finish uploading.");
         return;
       }
-      const auth = getAuth();
       const user = auth.currentUser;
-      if (user !== null) {
+      if (user) {
         this.campaign.userUID = user.uid;
       } else {
         console.error("No authenticated user found.");
@@ -221,7 +214,6 @@ export default {
         daysLeft: "",
         category: "",
         starterMoney: "",
-        userID: null,
         zadaciCijene: [],
       };
       this.zadaciCijene = [];
@@ -309,6 +301,21 @@ select {
   border-radius: 4px;
 }
 
+.image-upload-container {
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.image-upload-container img {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
 .image-upload-label {
   display: flex;
   align-items: center;
@@ -332,6 +339,11 @@ button {
   background-color: #7eb584;
   color: white;
   cursor: pointer;
+}
+
+button:disabled {
+  background-color: #d0d0d0;
+  cursor: not-allowed;
 }
 
 button:hover {
