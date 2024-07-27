@@ -4,7 +4,9 @@
       <h1><span>CRO</span>WDFUNDING</h1>
     </div>
     <div class="user-info" v-if="user">
-      <span>{{ username }}</span>
+      <router-link :to="{ name: 'ProfileView', params: { userId: user.uid } }">
+        <span class="username">{{ username }}</span>
+      </router-link>
       <button @click="logout">Logout</button>
     </div>
   </div>
@@ -90,6 +92,11 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
+}
+
+.username {
+  color: black;
+  font-weight: bold;
 }
 
 .user-info span {

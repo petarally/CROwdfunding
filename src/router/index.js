@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import HomeView from "../views/HomeView.vue";
 import AddCampaignView from "../views/AddCampaignView.vue";
-import CampaignView from "../views/CampaignView.vue";
 
 const routes = [
   {
@@ -41,6 +40,13 @@ const routes = [
     name: "CampaignView",
     component: () =>
       import(/* webpackChunkName: "campaign" */ "../views/CampaignView.vue"),
+    props: true,
+  },
+  {
+    path: "/profile/:userId",
+    name: "ProfileView",
+    component: () =>
+      import(/* webpackChunkName: "profile" */ "../views/ProfileView.vue"),
     props: true,
   },
 ];
