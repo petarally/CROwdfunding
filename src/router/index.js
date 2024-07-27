@@ -23,7 +23,7 @@ const routes = [
       import(/* webpackChunkName: "signup" */ "../views/SignUpView.vue"),
   },
   {
-    path: "/main",
+    path: "/campaigns",
     name: "MainView",
     component: () =>
       import(/* webpackChunkName: "main" */ "../views/MainView.vue"),
@@ -37,7 +37,7 @@ const routes = [
     component: AddCampaignView,
   },
   {
-    path: "/campaign/:id",
+    path: "/campaigns/:id",
     name: "CampaignView",
     component: () =>
       import(/* webpackChunkName: "campaign" */ "../views/CampaignView.vue"),
