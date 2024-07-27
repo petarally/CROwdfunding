@@ -117,8 +117,7 @@
 
 <script>
 import { db, auth, storage } from "@/firebase"; // Import storage
-import { collection, addDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export default {
@@ -133,7 +132,6 @@ export default {
         daysLeft: "",
         category: "",
         starterMoney: "",
-        userID: null,
         zadaciCijene: [],
       },
       zadaciCijene: [],
@@ -189,17 +187,29 @@ export default {
         console.error("Wait for the image to finish uploading.");
         return;
       }
+
       const user = auth.currentUser;
-      if (user) {
-        this.campaign.userUID = user.uid;
-      } else {
+      if (!user) {
         console.error("No authenticated user found.");
         return;
       }
+
+      // Add additional campaign fields
+      this.campaign.userUID = user.uid;
       this.campaign.zadaciCijene = this.zadaciCijene;
+
       try {
+        // Step 1: Add the campaign document
         const docRef = await addDoc(collection(db, "campaigns"), this.campaign);
+
+        // Step 2: Update the campaign document with the campaignId
+        await updateDoc(doc(db, "campaigns", docRef.id), {
+          campaignId: docRef.id,
+        });
+
         console.log("Document written with ID: ", docRef.id);
+
+        // Reset the form
         this.resetForm();
       } catch (e) {
         console.error("Error adding document: ", e);
@@ -219,6 +229,12 @@ export default {
       this.zadaciCijene = [];
       this.uploadProgress = 0;
       this.isUploading = false;
+
+      // Clear the file input
+      const fileInput = document.getElementById("campaignImage");
+      if (fileInput) {
+        fileInput.value = "";
+      }
     },
   },
 };

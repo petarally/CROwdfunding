@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <div class="title">
+    <div class="title" @click="getToMain">
       <h1><span>CRO</span>WDFUNDING</h1>
     </div>
     <div class="user-info" v-if="user">
@@ -35,6 +35,9 @@ export default {
     });
   },
   methods: {
+    getToMain() {
+      this.$router.push({ name: "MainView" });
+    },
     async fetchUsername(uid) {
       const db = getFirestore(firebaseApp);
       const userDoc = await getDoc(doc(db, "users", uid));
@@ -71,6 +74,7 @@ export default {
   display: flex;
   justify-content: space-around;
   margin: 1rem 0;
+  cursor: pointer;
 }
 
 .title span {

@@ -2,7 +2,7 @@
   <div class="card">
     <img :src="campaignImage" alt="Campaign Image" class="campaign-image" />
     <div class="content">
-      <h2 class="campaign-name" @click="toggleName">
+      <h2 class="campaign-name" @click="viewCampaignDetails">
         {{ truncatedCampaignName }}
       </h2>
       <p class="campaign-details" @click="toggleDetails">
@@ -15,7 +15,7 @@
         </p>
         <p>Preostalo dana: {{ daysLeft }}</p>
       </div>
-      <button @click="openCampaignDetails">Sudjeluj</button>
+      <button @click="viewCampaignDetails">Sudjeluj</button>
     </div>
   </div>
 </template>
@@ -29,6 +29,10 @@ export default {
     campaignDetails: String,
     moneyNeeded: Number,
     daysLeft: Number,
+    campaignId: {
+      type: String,
+      required: true, // Ensure that this prop is required
+    },
   },
   data() {
     return {
@@ -51,14 +55,19 @@ export default {
     },
   },
   methods: {
-    toggleName() {
-      this.showFullCampaignName = !this.showFullCampaignName;
-    },
     toggleDetails() {
       this.showFullCampaignDetails = !this.showFullCampaignDetails;
     },
-    openCampaignDetails() {
-      alert("Opening campaign details...");
+    viewCampaignDetails() {
+      console.log(this.campaignId);
+      if (this.campaignId) {
+        this.$router.push({
+          name: "CampaignView",
+          params: { id: this.campaignId },
+        });
+      } else {
+        console.error("Campaign ID is missing.");
+      }
     },
   },
 };
@@ -92,6 +101,7 @@ export default {
 
     h2 {
       margin-top: 0;
+      cursor: pointer;
     }
 
     hr {

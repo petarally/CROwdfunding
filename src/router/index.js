@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import HomeView from "../views/HomeView.vue";
 import AddCampaignView from "../views/AddCampaignView.vue";
+import CampaignView from "../views/CampaignView.vue";
 
 const routes = [
   {
@@ -13,27 +14,34 @@ const routes = [
     path: "/login",
     name: "LoginView",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/LoginView.vue"),
+      import(/* webpackChunkName: "login" */ "../views/LoginView.vue"),
   },
   {
     path: "/signup",
     name: "SignUpView",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/SignUpView.vue"),
+      import(/* webpackChunkName: "signup" */ "../views/SignUpView.vue"),
   },
   {
     path: "/main",
     name: "MainView",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/MainView.vue"),
+      import(/* webpackChunkName: "main" */ "../views/MainView.vue"),
     meta: {
-      requiresAuth: false /* Tu treba promijeniti u true kasnije */,
+      requiresAuth: false, // Change to true when needed
     },
   },
   {
     path: "/add-campaign",
     name: "AddCampaign",
     component: AddCampaignView,
+  },
+  {
+    path: "/campaign/:id",
+    name: "CampaignView",
+    component: () =>
+      import(/* webpackChunkName: "campaign" */ "../views/CampaignView.vue"),
+    props: true,
   },
 ];
 
@@ -50,26 +58,19 @@ router.beforeEach((to, from, next) => {
   }
 
   const auth = getAuth();
-  new Promise((resolve, reject) => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (user) => {
-        unsubscribe();
-        resolve(user);
-      },
-      reject
-    );
-  })
-    .then((user) => {
+  onAuthStateChanged(
+    auth,
+    (user) => {
       if (user) {
         next();
       } else {
         next("/login");
       }
-    })
-    .catch(() => {
+    },
+    () => {
       next("/login");
-    });
+    }
+  );
 });
 
 export default router;

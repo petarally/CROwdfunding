@@ -9,12 +9,13 @@
           <div class="listings-container">
             <ListingCard
               v-for="campaign in campaigns"
-              :key="campaign.id"
+              :key="campaign.campaignId"
               :campaignImage="campaign.campaignImage"
               :campaignName="campaign.campaignName"
               :campaignDetails="campaign.campaignDetails"
               :moneyNeeded="campaign.moneyNeeded"
               :daysLeft="campaign.daysLeft"
+              :campaignId="campaign.campaignId"
               class="listing-card"
             />
             <div v-if="campaigns.length === 0" class="message">
@@ -73,7 +74,7 @@ export default {
         }
 
         this.campaigns = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
+          campaignId: doc.id,
           ...doc.data(),
         }));
 
