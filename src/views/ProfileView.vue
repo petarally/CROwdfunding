@@ -12,15 +12,6 @@
         />
       </div>
       <div v-else-if="user.userStatus === 1">
-        <!-- Pustolov View -->
-        <PustolovView
-          :user="user"
-          :newAmount="newAmount"
-          @update:newAmount="newAmount = $event"
-          @updateAmount="updateAmount"
-        />
-      </div>
-      <div v-else-if="user.userStatus === 2">
         <!-- Virtuoz View -->
         <VirtuozView
           :user="user"
@@ -29,7 +20,7 @@
           @updateAmount="updateAmount"
         />
       </div>
-      <div v-else-if="user.userStatus === 3">
+      <div v-else-if="user.userStatus === 2">
         <!-- Mecena View -->
         <MecenaView
           :user="user"
@@ -52,7 +43,6 @@ import { firebaseApp } from "@/firebase.js";
 import NavbarComponent from "@/components/NavbarComponent.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
 import AdminView from "@/views/AdminView.vue";
-import PustolovView from "@/views/PustolovView.vue";
 import VirtuozView from "@/views/VirtuozView.vue";
 import MecenaView from "@/views/MecenaView.vue";
 
@@ -62,7 +52,6 @@ export default {
     NavbarComponent,
     FooterComponent,
     AdminView,
-    PustolovView,
     VirtuozView,
     MecenaView,
   },
@@ -76,17 +65,13 @@ export default {
           benefits: ["Manage users", "Access to all data", "Priority support"],
         },
         1: {
-          label: "Pustolov",
-          benefits: ["Access to exclusive content", "Monthly newsletter"],
-        },
-        2: {
           label: "Virtuoz",
           benefits: [
             "All benefits of Pustolov",
             "Early access to new features",
           ],
         },
-        3: {
+        2: {
           label: "Mecena",
           benefits: [
             "All benefits of Virtuoz",

@@ -7,7 +7,7 @@
     <div class="update-amount">
       <input
         :value="newAmount"
-        @input="$emit('update:newAmount', $event.target.value)"
+        @input="$emit('update:newAmount', parseFloat($event.target.value))"
         type="number"
         placeholder="Enter new amount"
       />
@@ -38,6 +38,8 @@
 
 <script>
 import InProfileCard from "@/components/InProfileCard.vue";
+import { db } from "@/firebase"; // Adjust the import according to your file structure
+import { doc, updateDoc } from "firebase/firestore"; // Firestore import
 
 export default {
   name: "MecenaView",
@@ -55,8 +57,26 @@ export default {
     },
   },
   methods: {
-    emitUpdateAmount() {
-      this.$emit("updateAmount");
+    async emitUpdateAmount() {
+      // Parse the new amount as a number
+      const parsedAmount = parseFloat(this.newAmount);
+      if (isNaN(parsedAmount)) {
+        alert("Please enter a valid number");
+        return;
+      }
+
+      this.user.amount += parsedAmount;
+
+      try {
+        const userRef = doc(db, "users", this.user.id); // Adjust according to your Firestore structure
+        await updateDoc(userRef, {
+          amount: this.user.amount,
+        });
+      } catch (error) {
+        console.error("Failed to update user amount:", error);
+        // Optionally, revert the change or show an error message to the user
+        this.user.amount -= parsedAmount; // Revert the amount update if there is an error
+      }
     },
   },
 };

@@ -7,7 +7,7 @@
     <div class="update-amount">
       <input
         :value="newAmount"
-        @input="$emit('update:newAmount', $event.target.value)"
+        @input="$emit('update:newAmount', parseFloat($event.target.value))"
         type="number"
         placeholder="Enter new amount"
       />
@@ -17,7 +17,7 @@
       <div class="upgrade-status">
         <h3>Postanite mecena status</h3>
         <InProfileCard :imageSrc="require('@/assets/rich.png')">
-          <button>Povisi status</button>
+          <button class="statusBtn" @click="riseStatus">Povisi status</button>
         </InProfileCard>
       </div>
       <div class="campaign-status">
@@ -36,6 +36,8 @@
 
 <script>
 import InProfileCard from "@/components/InProfileCard.vue";
+import { db } from "@/firebase"; // Adjust the import according to your file structure
+import { doc, updateDoc } from "firebase/firestore"; // Firestore import
 
 export default {
   name: "VirtuozView",
@@ -53,8 +55,41 @@ export default {
     },
   },
   methods: {
-    emitUpdateAmount() {
-      this.$emit("updateAmount");
+    async emitUpdateAmount() {
+      // Parse the new amount as a number
+      const parsedAmount = parseFloat(this.newAmount);
+      if (isNaN(parsedAmount)) {
+        alert("Please enter a valid number");
+        return;
+      }
+
+      this.user.amount += parsedAmount;
+
+      try {
+        const userRef = doc(db, "users", this.user.id); // Adjust according to your Firestore structure
+        await updateDoc(userRef, {
+          amount: this.user.amount,
+        });
+      } catch (error) {
+        console.error("Failed to update user amount:", error);
+        // Optionally, revert the change or show an error message to the user
+        this.user.amount -= parsedAmount; // Revert the amount update if there is an error
+      }
+    },
+    async riseStatus() {
+      alert("Status has been updated");
+      this.user.userStatus = 2;
+
+      try {
+        const userRef = doc(db, "users", this.user.id); // Adjust according to your Firestore structure
+        await updateDoc(userRef, {
+          userStatus: this.user.userStatus,
+        });
+      } catch (error) {
+        console.error("Failed to update user status:", error);
+        // Optionally, revert the change or show an error message to the user
+        this.user.userStatus = 1; // Assuming 1 is the original status
+      }
     },
   },
 };
@@ -80,5 +115,14 @@ export default {
   display: flex;
   justify-content: center;
   padding: 1rem 5rem;
+}
+
+.statusBtn {
+  background-color: #ff7b00;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
