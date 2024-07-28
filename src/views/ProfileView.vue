@@ -100,7 +100,7 @@ export default {
 
 .profile {
   text-align: center;
-  width: 100%; /* Ensure profile takes full width */
+  width: 100%;
 }
 
 ul {

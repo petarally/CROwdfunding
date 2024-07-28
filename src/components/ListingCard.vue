@@ -31,7 +31,7 @@ export default {
     daysLeft: Number,
     campaignId: {
       type: String,
-      required: true, // Ensure that this prop is required
+      required: true,
     },
   },
   data() {
