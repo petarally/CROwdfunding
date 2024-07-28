@@ -1,41 +1,75 @@
 <template>
   <NavbarComponent />
   <div class="profile-content">
-    <div class="profile">
-      <h2>User Profile</h2>
-      <div v-if="user">
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Status:</strong> {{ userStatusLabel }}</p>
-        <ul>
-          <li v-for="(benefit, index) in userBenefits" :key="index">
-            {{ benefit }}
-          </li>
-        </ul>
+    <div class="profile" v-if="user">
+      <div v-if="user.userStatus === 0">
+        <!-- Admin View -->
+        <AdminView
+          :user="user"
+          :newAmount="newAmount"
+          @update:newAmount="newAmount = $event"
+          @updateAmount="updateAmount"
+        />
       </div>
-      <div v-else>
-        <p>Loading...</p>
+      <div v-else-if="user.userStatus === 1">
+        <!-- Pustolov View -->
+        <PustolovView
+          :user="user"
+          :newAmount="newAmount"
+          @update:newAmount="newAmount = $event"
+          @updateAmount="updateAmount"
+        />
       </div>
+      <div v-else-if="user.userStatus === 2">
+        <!-- Virtuoz View -->
+        <VirtuozView
+          :user="user"
+          :newAmount="newAmount"
+          @update:newAmount="newAmount = $event"
+          @updateAmount="updateAmount"
+        />
+      </div>
+      <div v-else-if="user.userStatus === 3">
+        <!-- Mecena View -->
+        <MecenaView
+          :user="user"
+          :newAmount="newAmount"
+          @update:newAmount="newAmount = $event"
+          @updateAmount="updateAmount"
+        />
+      </div>
+    </div>
+    <div v-else>
+      <p>Loading...</p>
     </div>
   </div>
   <FooterComponent />
 </template>
 
 <script>
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import { firebaseApp } from "@/firebase.js";
 import NavbarComponent from "@/components/NavbarComponent.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
+import AdminView from "@/views/AdminView.vue";
+import PustolovView from "@/views/PustolovView.vue";
+import VirtuozView from "@/views/VirtuozView.vue";
+import MecenaView from "@/views/MecenaView.vue";
 
 export default {
   name: "ProfileView",
   components: {
     NavbarComponent,
     FooterComponent,
+    AdminView,
+    PustolovView,
+    VirtuozView,
+    MecenaView,
   },
   data() {
     return {
       user: null,
+      newAmount: 0,
       statuses: {
         0: {
           label: "Admin",
@@ -80,9 +114,35 @@ export default {
       const db = getFirestore(firebaseApp);
       const userDoc = await getDoc(doc(db, "users", userId));
       if (userDoc.exists()) {
-        this.user = userDoc.data();
+        this.user = { id: userDoc.id, ...userDoc.data() };
       } else {
         console.error("User not found");
+      }
+    },
+    async updateAmount() {
+      if (!this.user) return;
+
+      const db = getFirestore(firebaseApp);
+      const userRef = doc(db, "users", this.user.id);
+
+      try {
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const currentAmount = userDoc.data().amount || 0;
+          const updatedAmount = currentAmount + this.newAmount;
+
+          await updateDoc(userRef, {
+            amount: updatedAmount,
+          });
+
+          this.user.amount = updatedAmount;
+          this.newAmount = 0;
+          console.log("Amount updated successfully");
+        } else {
+          console.error("User not found");
+        }
+      } catch (error) {
+        console.error("Error updating amount: ", error);
       }
     },
   },
@@ -103,12 +163,27 @@ export default {
   width: 100%;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.update-amount {
+  margin-top: 20px;
 }
 
-li {
-  margin: 0.5rem 0;
+.update-amount input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.update-amount button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #7eb584;
+  color: white;
+  cursor: pointer;
+}
+
+.update-amount button:hover {
+  background-color: #49704e;
 }
 </style>
