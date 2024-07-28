@@ -5,7 +5,6 @@
       <h2 v-if="campaign">{{ campaign.campaignName }}</h2>
       <p v-if="campaign">{{ campaign.campaignDetails }}</p>
       <div class="task-list" v-if="campaign">
-        <h3>Popis zadataka i nagrada</h3>
         <TaskList :zadaciCijene="campaign.zadaciCijene" />
       </div>
       <p v-else>Loading campaign data...</p>
@@ -76,8 +75,28 @@ export default {
 
 .campaign-info {
   flex: 3;
-  padding: 1rem 5rem;
+  padding: 5rem;
   overflow-y: auto;
+}
+
+.campaign-info h2,
+p {
+  display: flex;
+  justify-self: start;
+}
+
+.campaign-info h2 {
+  color: #ff7b00;
+  font-family: "Popins", sans-serif;
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.campaign-info p {
+  color: #b4b4b4;
+  font-family: "Popins", sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .campaign-image {
@@ -108,6 +127,6 @@ export default {
 }
 
 .task-list {
-  margin-top: 1rem;
+  padding-top: 0.5rem;
 }
 </style>

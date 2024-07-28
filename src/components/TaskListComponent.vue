@@ -1,10 +1,15 @@
 <template>
   <div class="task-list">
-    <h3>Popis zadataka i nagrada za kampanju</h3>
+    <h3>Popis zadataka i nagrada</h3>
     <ul>
       <li v-for="zadatak in zadaciCijene" :key="zadatak.id">
-        <span class="task-name">{{ zadatak.zadatak }}</span>
-        <span class="task-price">{{ zadatak.cijena }} kn</span>
+        <div class="tasks-details">
+          <span class="task-name">{{ zadatak.zadatak }}</span>
+          <span class="task-price">
+            <strong>Cijena zadataka: </strong> {{ zadatak.cijena }} kn</span
+          >
+        </div>
+        <button @click="applyToTask" class="prijavaBtn">Prijava</button>
       </li>
     </ul>
   </div>
@@ -23,20 +28,6 @@ export default {
 </script>
 
 <style scoped>
-.task-list {
-  padding: 1rem;
-  background: #f0f8f1;
-  border: 1px solid #d7d7d7;
-  border-radius: 4px;
-  margin-top: 1rem;
-}
-
-.task-list h3 {
-  color: #ff7b00;
-  font-weight: bold;
-  padding-bottom: 1rem;
-}
-
 ul {
   list-style-type: none;
   padding: 0;
@@ -45,8 +36,15 @@ ul {
 li {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #d7d7d7;
+  padding: 1rem;
+  border: #7eb584 2px solid;
+  margin-bottom: 1rem;
+}
+
+.tasks-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .task-name {
@@ -55,6 +53,27 @@ li {
 
 .task-price {
   font-weight: bold;
-  color: #7eb584;
+  color: #0f0f0f;
+}
+
+.task-list h3 {
+  display: flex;
+  justify-self: start;
+  color: #0f0f0f;
+  font-family: "Popins", sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 1rem 0;
+}
+
+.prijavaBtn {
+  background-color: #7eb584;
+  color: white;
+  border: none;
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: "Popins", sans-serif;
+  font-weight: bold;
 }
 </style>
