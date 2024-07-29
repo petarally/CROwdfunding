@@ -32,8 +32,30 @@
             id="password"
             name="password"
             v-model="password"
+            @focus="showPasswordRequirements = true"
+            @blur="showPasswordRequirements = false"
             required
           />
+          <div
+            v-if="showPasswordRequirements"
+            class="password-requirements alert-message"
+          >
+            Lozinka mora sadržavati najmanje 8 znakova, uključujući jedno veliko
+            slovo, jedno malo slovo i jedan broj.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Potvrdite lozinku</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            v-model="confirmPassword"
+            required
+          />
+        </div>
+        <div v-if="passwordError" class="error-message">
+          Lozinke se ne podudaraju.
         </div>
         <button type="button" @click="signup">Izradi račun</button>
         <GoogleSignInButton @user-signed-in="username = $event" />
@@ -70,7 +92,10 @@ export default {
     return {
       email: "",
       password: "",
+      confirmPassword: "",
       username: "",
+      passwordError: false,
+      showPasswordRequirements: false,
     };
   },
   methods: {
@@ -94,6 +119,13 @@ export default {
       }
     },
     async signup() {
+      if (this.password !== this.confirmPassword) {
+        this.passwordError = true;
+        return;
+      } else {
+        this.passwordError = false;
+      }
+
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -124,6 +156,19 @@ export default {
 </script>
 
 <style scoped>
+.alert-message {
+  margin-top: 5px;
+  padding: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
 @media (max-width: 768px) {
   .signup-container {
     flex-direction: column;

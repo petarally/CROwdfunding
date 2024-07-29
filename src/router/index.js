@@ -27,13 +27,16 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "main" */ "../views/MainView.vue"),
     meta: {
-      requiresAuth: false, // Change to true when needed
+      requiresAuth: true, // Change to true when needed
     },
   },
   {
     path: "/add-campaign",
     name: "AddCampaign",
     component: AddCampaignView,
+    meta: {
+      requiresAuth: true, // Change to true when needed
+    },
   },
   {
     path: "/campaigns/:id",
@@ -41,6 +44,9 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "campaign" */ "../views/CampaignView.vue"),
     props: true,
+    meta: {
+      requiresAuth: true, // Change to true when needed
+    },
   },
   {
     path: "/profile/:userId",
@@ -48,6 +54,9 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "profile" */ "../views/ProfileView.vue"),
     props: true,
+    meta: {
+      requiresAuth: true, // Change to true when needed
+    },
   },
 ];
 
