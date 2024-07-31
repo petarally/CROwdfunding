@@ -16,6 +16,8 @@
               :moneyNeeded="campaign.moneyNeeded"
               :daysLeft="campaign.daysLeft"
               :campaignId="campaign.campaignId"
+              :startDate="campaign.startDate"
+              :endDate="campaign.endDate"
               class="listing-card"
             />
             <div v-if="campaigns.length === 0" class="message">

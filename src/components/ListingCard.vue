@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div :class="['card', { 'campaign-over': daysLeft === 0 }]">
     <img :src="campaignImage" alt="Campaign Image" class="campaign-image" />
     <div class="content">
       <h2 class="campaign-name" @click="viewCampaignDetails">
@@ -15,12 +15,16 @@
         </p>
         <p>Preostalo dana: {{ daysLeft }}</p>
       </div>
-      <button @click="viewCampaignDetails">Sudjeluj</button>
+      <button @click="viewCampaignDetails" :disabled="daysLeft === 0">
+        Sudjeluj
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { calculateDaysLeft } from "@/functions";
+
 export default {
   name: "ListingCard",
   props: {
@@ -28,7 +32,8 @@ export default {
     campaignName: String,
     campaignDetails: String,
     moneyNeeded: Number,
-    daysLeft: Number,
+    startDate: String,
+    endDate: String,
     campaignId: {
       type: String,
       required: true,
@@ -41,6 +46,12 @@ export default {
     };
   },
   computed: {
+    daysLeft() {
+      console.log(`Start Date: ${this.startDate}, End Date: ${this.endDate}`);
+      const daysLeft = calculateDaysLeft(this.startDate, this.endDate);
+      console.log(`Days Left: ${daysLeft}`);
+      return daysLeft;
+    },
     truncatedCampaignName() {
       if (this.showFullCampaignName || this.campaignName.length < 50) {
         return this.campaignName;
@@ -60,13 +71,13 @@ export default {
     },
     viewCampaignDetails() {
       console.log(this.campaignId);
-      if (this.campaignId) {
+      if (this.campaignId && this.daysLeft > 0) {
         this.$router.push({
           name: "CampaignView",
           params: { id: this.campaignId },
         });
       } else {
-        console.error("Campaign ID is missing.");
+        console.error("Campaign ID is missing or campaign is over.");
       }
     },
   },
@@ -86,6 +97,11 @@ export default {
   border-bottom: 4px solid #7caa7c;
   display: flex;
   flex-direction: column;
+
+  &.campaign-over {
+    filter: grayscale(100%);
+    pointer-events: none;
+  }
 
   .campaign-image {
     width: 100%;

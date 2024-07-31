@@ -20,6 +20,8 @@
         :moneyNeeded="campaign.moneyNeeded"
         :daysLeft="campaign.daysLeft"
         :campaignId="campaign.campaignId"
+        :startDate="campaign.startDate"
+        :endDate="campaign.endDate"
       />
     </div>
     <FooterComponent />

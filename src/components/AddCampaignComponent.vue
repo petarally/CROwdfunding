@@ -133,6 +133,8 @@ export default {
         category: "",
         starterMoney: "",
         zadaciCijene: [],
+        startDate: null,
+        endDate: null,
       },
       zadaciCijene: [],
       uploadProgress: 0,
@@ -196,9 +198,24 @@ export default {
 
       this.campaign.userUID = user.uid;
       this.campaign.zadaciCijene = this.zadaciCijene;
+      this.campaign.startDate = new Date();
+
+      const durationInDays = parseInt(this.campaign.daysLeft, 10);
+      if (isNaN(durationInDays)) {
+        console.error("Invalid number of days.");
+        return;
+      }
+
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + durationInDays);
+      this.campaign.endDate = endDate;
 
       try {
-        const docRef = await addDoc(collection(db, "campaigns"), this.campaign);
+        const docRef = await addDoc(collection(db, "campaigns"), {
+          ...this.campaign,
+          startDate: this.campaign.startDate.toISOString(),
+          endDate: this.campaign.endDate.toISOString(),
+        });
 
         await updateDoc(doc(db, "campaigns", docRef.id), {
           campaignId: docRef.id,
@@ -221,6 +238,8 @@ export default {
         category: "",
         starterMoney: "",
         zadaciCijene: [],
+        startDate: null,
+        endDate: null,
       };
       this.zadaciCijene = [];
       this.uploadProgress = 0;
