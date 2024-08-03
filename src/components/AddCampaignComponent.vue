@@ -203,6 +203,7 @@ export default {
         completed: false, // Add default value for completed
       }));
       this.campaign.startDate = new Date();
+      this.campaign.campaignCompleted = false;
 
       const durationInDays = parseInt(this.campaign.daysLeft, 10);
       if (isNaN(durationInDays)) {

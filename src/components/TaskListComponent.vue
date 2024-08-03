@@ -2,7 +2,14 @@
   <div class="task-list">
     <h3>Popis zadataka i nagrada</h3>
     <ul>
-      <li v-for="zadatak in zadaciCijene" :key="zadatak.id">
+      <li
+        v-for="zadatak in zadaciCijene"
+        :key="zadatak.id"
+        :class="{
+          'task-completed': zadatak.completed && userStatus !== 2,
+          'task-status-2': userStatus === 2,
+        }"
+      >
         <div class="tasks-details">
           <span class="task-name">{{ zadatak.zadatak }}</span>
           <span class="task-price">
@@ -10,8 +17,10 @@
           </span>
         </div>
         <button
+          v-if="userStatus !== 2"
           @click="applyToTask(zadatak.id, zadatak.cijena)"
           class="prijavaBtn"
+          :disabled="zadatak.completed"
         >
           Prijava
         </button>
@@ -26,6 +35,10 @@ export default {
   props: {
     zadaciCijene: {
       type: Array,
+      required: true,
+    },
+    userStatus: {
+      type: Number,
       required: true,
     },
   },
@@ -49,6 +62,16 @@ li {
   padding: 1rem;
   border: #7eb584 2px solid;
   margin-bottom: 1rem;
+  transition: filter 0.3s ease;
+}
+
+.task-completed {
+  filter: blur(2px);
+  background-color: #e0e0e0; /* Light gray background for completed tasks */
+}
+
+.task-status-2 {
+  background-color: #d0d0d0; /* Different background color for status 2 tasks */
 }
 
 .tasks-details {
@@ -70,7 +93,7 @@ li {
   display: flex;
   justify-self: start;
   color: #0f0f0f;
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   font-size: 1rem;
   padding: 1rem 0;
@@ -83,7 +106,13 @@ li {
   padding: 0.5rem 2rem;
   cursor: pointer;
   font-size: 1rem;
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.prijavaBtn:disabled {
+  background-color: #bcbcbc; /* Gray background for disabled button */
+  cursor: not-allowed;
 }
 </style>

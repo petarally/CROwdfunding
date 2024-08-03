@@ -8,13 +8,31 @@
         </div>
         <h2 v-if="campaign">{{ campaign.campaignName }}</h2>
         <p v-if="campaign">{{ campaign.campaignDetails }}</p>
-        <div class="task-list" v-if="campaign">
+        <div class="donation-section">
+          <h3>Sviđa Vam se ideja?</h3>
+          <div class="donation-form">
+            <input
+              type="number"
+              v-model="donationAmount"
+              placeholder="Enter donation amount"
+              min="0"
+            />
+            <button
+              @click="handleDonation"
+              :disabled="!donationAmount || donationAmount <= 0"
+            >
+              Donate
+            </button>
+          </div>
+        </div>
+        <div class="task-list" v-if="campaign && user">
           <TaskList
             :zadaciCijene="campaign.zadaciCijene"
+            :userStatus="user.userStatus"
             @apply-to-task="handleApplyToTask"
           />
         </div>
-        <p v-else>Loading campaign data...</p>
+        <p v-else>Loading data...</p>
       </div>
       <div class="campaign-image">
         <div class="image-container">
@@ -52,6 +70,8 @@ export default {
       user: null,
       starterMoney: 0,
       raised: 0,
+      successfulCampaigns: 0,
+      donationAmount: 0,
     };
   },
   computed: {
@@ -76,6 +96,9 @@ export default {
         this.campaign = campaignData;
         this.starterMoney = Number(campaignData.starterMoney || 0);
         this.raised = Number(campaignData.raised || 0);
+
+        // Update successfulCampaigns based on the criteria
+        this.checkCampaignSuccess();
       } else {
         console.error("No such campaign document!");
       }
@@ -88,6 +111,7 @@ export default {
           if (userSnapshot.exists()) {
             const userData = userSnapshot.data();
             this.user = userData;
+            this.user.uid = user.uid; // Ensure the user UID is set
             this.user.amount = Number(userData.amount || 0); // Convert to number
             this.user.appliedTasks = userData.appliedTasks || [];
           } else {
@@ -128,9 +152,6 @@ export default {
         const userDoc = doc(db, "users", userUID);
         const campaignDoc = doc(db, "campaigns", campaignId);
 
-        console.log("User Document Reference:", userDoc);
-        console.log("Campaign Document Reference:", campaignDoc);
-
         // Update user's balance
         await updateDoc(userDoc, {
           amount: userBalance - taskCost,
@@ -160,9 +181,81 @@ export default {
         this.user.appliedTasks = updatedAppliedTasks;
         this.campaign.zadaciCijene = updatedTasks;
 
+        // Recheck campaign success status
+        this.checkCampaignSuccess();
+
         alert("Task applied successfully!");
       } catch (error) {
         console.error("Error applying to task:", error);
+      }
+    },
+    async handleDonation() {
+      if (!this.user || !this.campaign) {
+        console.error("User or campaign data is not loaded.");
+        return;
+      }
+
+      const donation = Number(this.donationAmount); // Convert to number
+      if (donation <= 0) {
+        alert("Please enter a valid donation amount.");
+        return;
+      }
+
+      try {
+        const db = getFirestore(firebaseApp);
+        const userUID = this.user.uid; // Use correct user UID
+        const campaignId = this.$route.params.id;
+
+        if (!userUID || !campaignId) {
+          throw new Error("User ID or Campaign ID is missing.");
+        }
+
+        const userDoc = doc(db, "users", userUID);
+        const campaignDoc = doc(db, "campaigns", campaignId);
+
+        // Update user's balance
+        await updateDoc(userDoc, {
+          amount: this.user.amount - donation,
+        });
+
+        // Update campaign's raised amount
+        await updateDoc(campaignDoc, {
+          raised: this.raised + donation,
+        });
+
+        // Update local state
+        this.user.amount -= donation;
+        this.raised += donation;
+
+        // Recheck campaign success status
+        this.checkCampaignSuccess();
+
+        alert("Donation made successfully!");
+        this.donationAmount = 0; // Clear the input field
+      } catch (error) {
+        console.error("Error making donation:", error);
+      }
+    },
+    async checkCampaignSuccess() {
+      // Check if all tasks are completed
+      const allTasksCompleted = this.campaign.zadaciCijene.every(
+        (task) => task.completed
+      );
+
+      // Check if raised amount meets or exceeds money needed
+      const moneyRequirementsMet = this.raised >= this.campaign.moneyNeeded;
+
+      // Update campaign's completion status based on the criteria
+      if (allTasksCompleted && moneyRequirementsMet) {
+        const db = getFirestore(firebaseApp);
+        const campaignDoc = doc(db, "campaigns", this.$route.params.id);
+
+        await updateDoc(campaignDoc, {
+          campaignCompleted: true,
+        });
+
+        // Update local state
+        this.campaign.campaignCompleted = true;
       }
     },
   },
@@ -188,7 +281,7 @@ export default {
 
 .raised-amount h3 {
   color: #ff7b00;
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   font-size: 1.5rem;
 }
@@ -201,14 +294,14 @@ p {
 
 .campaign-info h2 {
   color: #ff7b00;
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   font-size: 2rem;
 }
 
 .campaign-info p {
   color: #b4b4b4;
-  font-family: "Popins", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   font-size: 1rem;
 }
@@ -224,7 +317,7 @@ p {
   height: 100%;
 }
 
-.campaign-image img {
+.image-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -236,11 +329,48 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(128, 128, 128, 0.3);
-  pointer-events: none;
+  background: rgba(0, 0, 0, 0.4);
+}
+.donation-section {
+  margin: 2rem 0;
 }
 
-.task-list {
-  padding-top: 0.5rem;
+.donation-section h3 {
+  color: #ff7b00;
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: start;
+}
+
+.donation-form {
+  display: flex;
+  align-items: center;
+}
+
+.donation-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  width: 200px;
+}
+
+.donation-form button {
+  padding: 0.5rem 1rem;
+  background: #ff7b00;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.donation-form button:disabled {
+  background: #ddd;
+  cursor: not-allowed;
 }
 </style>

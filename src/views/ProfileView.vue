@@ -31,7 +31,7 @@
       </div>
     </div>
     <div v-else>
-      <p>Loading...</p>
+      <p>Učitavanje...</p>
     </div>
   </div>
   <FooterComponent />

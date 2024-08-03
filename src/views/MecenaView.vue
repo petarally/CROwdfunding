@@ -10,8 +10,11 @@
         @input="$emit('update:newAmount', parseFloat($event.target.value))"
         type="number"
         placeholder="Enter new amount"
+        class="amount-input"
       />
-      <button @click="emitUpdateAmount">Dodaj kune</button>
+      <button @click="emitUpdateAmount" class="add-amount-button">
+        Dodaj kune
+      </button>
     </div>
     <div class="cards">
       <div class="exclusive-benefit">
@@ -92,15 +95,81 @@ export default {
 
 .stanje p {
   font-weight: bold;
+  margin: 0;
 }
 
 #iznos {
   color: #ff7b00;
+  font-size: 1.5rem;
+}
+
+.update-amount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 5rem;
+  margin-bottom: 1rem;
+}
+
+.amount-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 1rem;
+  width: 200px;
+  font-size: 1rem;
+}
+
+.add-amount-button {
+  background-color: #ff7b00;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.add-amount-button:hover {
+  background-color: #e66a00;
 }
 
 .cards {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   padding: 1rem 5rem;
+}
+
+.cards > div {
+  flex: 1;
+  margin: 0 1rem;
+}
+
+.cards h3 {
+  margin-bottom: 1rem;
+}
+
+.statusBtn {
+  background-color: #ff7b00;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.statusBtn:hover {
+  background-color: #e66a00;
+}
+
+@media (max-width: 992px) {
+  .cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cards > div {
+    margin-bottom: 1rem;
+  }
 }
 </style>
