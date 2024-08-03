@@ -114,7 +114,8 @@ export default {
           await setDoc(doc(db, "users", user.uid), {
             username,
             email,
-            userStatus: 0,
+            userStatus: 1,
+            amount: 0,
           });
           this.username = username;
         }

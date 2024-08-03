@@ -6,10 +6,15 @@
         <div class="tasks-details">
           <span class="task-name">{{ zadatak.zadatak }}</span>
           <span class="task-price">
-            <strong>Cijena zadataka: </strong> {{ zadatak.cijena }} kn</span
-          >
+            <strong>Cijena zadataka: </strong> {{ zadatak.cijena }} kn
+          </span>
         </div>
-        <button @click="applyToTask" class="prijavaBtn">Prijava</button>
+        <button
+          @click="applyToTask(zadatak.id, zadatak.cijena)"
+          class="prijavaBtn"
+        >
+          Prijava
+        </button>
       </li>
     </ul>
   </div>
@@ -22,6 +27,11 @@ export default {
     zadaciCijene: {
       type: Array,
       required: true,
+    },
+  },
+  methods: {
+    applyToTask(taskId, taskPrice) {
+      this.$emit("apply-to-task", { taskId, taskPrice });
     },
   },
 };

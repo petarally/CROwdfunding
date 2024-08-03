@@ -184,6 +184,7 @@ export default {
         cijena: "",
       });
     },
+
     async submitCampaign() {
       if (this.isUploading) {
         console.error("Wait for the image to finish uploading.");
@@ -197,7 +198,10 @@ export default {
       }
 
       this.campaign.userUID = user.uid;
-      this.campaign.zadaciCijene = this.zadaciCijene;
+      this.campaign.zadaciCijene = this.zadaciCijene.map((task) => ({
+        ...task,
+        completed: false, // Add default value for completed
+      }));
       this.campaign.startDate = new Date();
 
       const durationInDays = parseInt(this.campaign.daysLeft, 10);
@@ -228,6 +232,7 @@ export default {
         console.error("Error adding document: ", e);
       }
     },
+
     resetForm() {
       this.campaign = {
         campaignImage: null,
