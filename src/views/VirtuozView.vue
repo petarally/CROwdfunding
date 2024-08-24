@@ -28,6 +28,7 @@
         <InProfileCard>
           <p>Successful campaigns: {{ successfulCampaigns }}</p>
         </InProfileCard>
+        <BarChart :chart-data="barChartData" />
       </div>
       <div class="ad">
         <h3>Virtuozno naprijed</h3>
@@ -39,11 +40,40 @@
         </InProfileCard>
       </div>
     </div>
+    <div class="campaigns-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Naziv Kampanje</th>
+            <th>Traženi Iznos</th>
+            <th>Završeno</th>
+            <th>Datum Završetka</th>
+            <th>Trenutni Iznos</th>
+            <th>Uspješno Završena kampanja</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="campaign in campaigns" :key="campaign.id">
+            <td>{{ campaign.campaignName }}</td>
+            <td>{{ campaign.moneyNeeded }} KN</td>
+            <td>
+              {{ isCampaignEnded(campaign.endDate) ? "DA" : "NE" }}
+            </td>
+            <td>{{ formatDate(campaign.endDate) }}</td>
+            <td>{{ campaign.raised }} KN</td>
+            <td>
+              {{ campaign.campaignCompleted ? "DA" : "NE" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
 import InProfileCard from "@/components/InProfileCard.vue";
+import BarChart from "@/components/BarChart.vue";
 import {
   getFirestore,
   collection,
@@ -59,6 +89,7 @@ export default {
   name: "VirtuozView",
   components: {
     InProfileCard,
+    BarChart,
   },
   props: {
     user: {
@@ -73,6 +104,17 @@ export default {
   data() {
     return {
       successfulCampaigns: 0,
+      campaigns: [],
+      barChartData: {
+        labels: [],
+        datasets: [
+          {
+            label: "Money Raised",
+            backgroundColor: "#f87979",
+            data: [],
+          },
+        ],
+      },
     };
   },
   methods: {
@@ -94,6 +136,42 @@ export default {
       } catch (error) {
         console.error("Failed to fetch successful campaigns:", error);
       }
+    },
+    async fetchUserCampaigns() {
+      try {
+        const db = getFirestore(firebaseApp);
+        const campaignsCol = collection(db, "campaigns");
+        const q = query(campaignsCol, where("userUID", "==", this.user.id));
+        const campaignSnapshot = await getDocs(q);
+
+        this.campaigns = campaignSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        this.processCampaignData();
+      } catch (error) {
+        console.error("Failed to fetch user campaigns:", error);
+      }
+    },
+    processCampaignData() {
+      const monthlyData = {};
+
+      this.campaigns.forEach((campaign) => {
+        const endDate = new Date(campaign.endDate);
+        const month = endDate.toLocaleString("default", { month: "long" });
+        const year = endDate.getFullYear();
+        const key = `${month} ${year}`;
+
+        if (!monthlyData[key]) {
+          monthlyData[key] = 0;
+        }
+
+        monthlyData[key] += campaign.raised;
+      });
+
+      this.barChartData.labels = Object.keys(monthlyData);
+      this.barChartData.datasets[0].data = Object.values(monthlyData);
     },
     async emitUpdateAmount() {
       const parsedAmount = parseFloat(this.newAmount);
@@ -128,14 +206,36 @@ export default {
         this.user.userStatus = 1;
       }
     },
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}.`;
+    },
+    isCampaignEnded(endDate) {
+      const currentDate = new Date();
+      const campaignEndDate = new Date(endDate);
+      return campaignEndDate <= currentDate;
+    },
   },
+
   async mounted() {
+    await this.fetchUserCampaigns();
     await this.fetchSuccessfulCampaigns();
   },
 };
 </script>
 
 <style scoped>
+.upgrade-status h3,
+.campaign-status h3,
+.ad h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+}
+
 .stanje {
   display: flex;
   flex-direction: column;
@@ -155,17 +255,22 @@ export default {
 
 .cards {
   display: flex;
-  justify-content: center;
-  padding: 1rem 5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 20rem;
 }
 
 .statusBtn {
-  background-color: #ff7b00;
+  background-color: #7eb584;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 5rem;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.statusBtn:hover {
+  background-color: #5d9e65;
 }
 
 .update-amount {
@@ -197,5 +302,26 @@ export default {
 
 .add-amount-button:hover {
   background-color: #e66a00;
+}
+
+.campaigns-table {
+  margin: 2rem 5rem;
+}
+
+.campaigns-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.campaigns-table th,
+.campaigns-table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.campaigns-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 </style>
