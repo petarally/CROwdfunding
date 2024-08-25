@@ -18,9 +18,9 @@
     </div>
     <div class="cards">
       <div class="support">
-        <h3>Direct Support Contact</h3>
+        <h3>Trenutni status kampanja</h3>
         <InProfileCard>
-          <p>Contact our support team directly for priority assistance.</p>
+          <BarChart :chart-data="barChartData" />
         </InProfileCard>
       </div>
     </div>
@@ -57,6 +57,7 @@
 
 <script>
 import InProfileCard from "@/components/InProfileCard.vue";
+import BarChart from "@/components/BarChart.vue";
 import { db } from "@/firebase";
 import {
   doc,
@@ -71,6 +72,7 @@ export default {
   name: "MecenaView",
   components: {
     InProfileCard,
+    BarChart,
   },
   props: {
     user: {
@@ -85,6 +87,16 @@ export default {
   data() {
     return {
       campaigns: [],
+      barChartData: {
+        labels: [],
+        datasets: [
+          {
+            label: "Prikupljeno novca",
+            backgroundColor: "#7eb584",
+            data: [],
+          },
+        ],
+      },
     };
   },
   methods: {
@@ -109,17 +121,56 @@ export default {
     },
     async fetchUserCampaigns() {
       try {
+        console.log("Fetching user campaigns...");
         const campaignsCol = collection(db, "campaigns");
         const q = query(campaignsCol, where("userUID", "==", this.user.id));
         const campaignSnapshot = await getDocs(q);
+
+        console.log("Campaign snapshot:", campaignSnapshot);
 
         this.campaigns = campaignSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        console.log("Campaigns:", this.campaigns);
+
+        this.processCampaignData();
       } catch (error) {
         console.error("Failed to fetch user campaigns:", error);
+        this.barChartData.labels = [];
+        this.barChartData.datasets[0].data = [];
       }
+    },
+    processCampaignData() {
+      const monthlyData = Array(12).fill(0);
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      this.campaigns.forEach((campaign) => {
+        const endDate = new Date(campaign.endDate);
+        const monthIndex = endDate.getMonth();
+        monthlyData[monthIndex] += campaign.raised;
+      });
+
+      console.log("Monthly Data:", monthlyData);
+
+      this.barChartData.labels = monthNames;
+      this.barChartData.datasets[0].data = monthlyData;
+
+      console.log("Bar Chart Data:", this.barChartData);
     },
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -135,6 +186,7 @@ export default {
     },
   },
   async mounted() {
+    console.log("Component mounted");
     await this.fetchUserCampaigns();
   },
 };

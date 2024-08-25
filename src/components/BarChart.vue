@@ -42,14 +42,14 @@ export default {
         responsive: true,
         plugins: {
           legend: {
-            display: false,
+            display: true,
           },
           tooltip: {
             callbacks: {
               label: function (context) {
                 let label = context.dataset.label || "";
                 if (context.parsed.y !== null) {
-                  label += ": " + context.parsed.y + " KN";
+                  label += `: ${context.parsed.y} KN`;
                 }
                 return label;
               },
