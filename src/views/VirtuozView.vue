@@ -201,7 +201,7 @@ export default {
       }
     },
     async riseStatus() {
-      alert("Status has been updated");
+      alert("Status je uspješno povišen na Mecena status!");
       this.user.userStatus = 2;
 
       try {

@@ -4,19 +4,14 @@
     <div class="campaign-container">
       <div class="campaign-info">
         <div class="raised-amount">
-          <h3>Total Raised: {{ totalRaisedAmount }} kn</h3>
+          <h3>Prikupljeno: {{ totalRaisedAmount }} KN</h3>
         </div>
         <h2 v-if="campaign">{{ campaign.campaignName }}</h2>
         <p v-if="campaign">{{ campaign.campaignDetails }}</p>
         <div class="donation-section">
           <h3>Sviđa Vam se ideja?</h3>
           <div class="donation-form">
-            <input
-              type="number"
-              v-model="donationAmount"
-              placeholder="Enter donation amount"
-              min="0"
-            />
+            <input type="number" v-model="donationAmount" min="0" />
             <button
               @click="handleDonation"
               :disabled="!donationAmount || donationAmount <= 0"
