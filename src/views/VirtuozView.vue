@@ -26,9 +26,8 @@
       <div class="campaign-status">
         <h3>Trenutni status kampanja</h3>
         <InProfileCard>
-          <p>Successful campaigns: {{ successfulCampaigns }}</p>
+          <BarChart :chart-data="barChartData" />
         </InProfileCard>
-        <BarChart :chart-data="barChartData" />
       </div>
       <div class="ad">
         <h3>Virtuozno naprijed</h3>
@@ -148,31 +147,40 @@ export default {
           id: doc.id,
           ...doc.data(),
         }));
-
         this.processCampaignData();
       } catch (error) {
         console.error("Failed to fetch user campaigns:", error);
+        this.barChartData.labels = [];
+        this.barChartData.datasets[0].data = [];
       }
     },
     processCampaignData() {
-      const monthlyData = {};
+      const monthlyData = Array(12).fill(0);
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
 
       this.campaigns.forEach((campaign) => {
         const endDate = new Date(campaign.endDate);
-        const month = endDate.toLocaleString("default", { month: "long" });
-        const year = endDate.getFullYear();
-        const key = `${month} ${year}`;
-
-        if (!monthlyData[key]) {
-          monthlyData[key] = 0;
-        }
-
-        monthlyData[key] += campaign.raised;
+        const monthIndex = endDate.getMonth();
+        monthlyData[monthIndex] += campaign.raised;
       });
 
-      this.barChartData.labels = Object.keys(monthlyData);
-      this.barChartData.datasets[0].data = Object.values(monthlyData);
+      this.barChartData.labels = monthNames;
+      this.barChartData.datasets[0].data = monthlyData;
     },
+
     async emitUpdateAmount() {
       const parsedAmount = parseFloat(this.newAmount);
       if (isNaN(parsedAmount)) {

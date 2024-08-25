@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Bar :chart-data="chartData" :options="chartOptions" />
+    <Bar :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
@@ -27,19 +27,59 @@ ChartJS.register(
 
 export default {
   name: "BarChart",
+  components: {
+    Bar,
+  },
   props: {
     chartData: {
       type: Object,
       required: true,
     },
-    chartOptions: {
-      type: Object,
-      required: false,
-      default: () => ({}),
-    },
   },
-  components: {
-    Bar,
+  computed: {
+    chartOptions() {
+      return {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || "";
+                if (context.parsed.y !== null) {
+                  label += ": " + context.parsed.y + " KN";
+                }
+                return label;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              padding: 10,
+            },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              padding: 10,
+            },
+          },
+        },
+        layout: {
+          padding: {
+            left: 10,
+            right: 10,
+            top: 10,
+            bottom: 10,
+          },
+        },
+      };
+    },
   },
 };
 </script>

@@ -1,8 +1,15 @@
 <template>
   <div class="profile-card">
-    <img :src="imageSrc" alt="Profile Image" class="profile-image" />
-    <hr />
-    <slot></slot>
+    <div class="profile-content">
+      <img
+        v-if="imageSrc"
+        :src="imageSrc"
+        alt="Profile Image"
+        class="profile-image"
+      />
+      <hr v-if="imageSrc" class="visible-hr" />
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -12,7 +19,7 @@ export default {
   props: {
     imageSrc: {
       type: String,
-      required: true,
+      required: false,
     },
   },
 };
@@ -24,12 +31,29 @@ export default {
   border-radius: 8px;
   padding: 16px;
   text-align: center;
-  width: 300px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .profile-image {
   width: 100%;
   height: auto;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+hr.visible-hr {
+  margin: 16px 0;
+  width: 100%;
 }
 </style>
