@@ -27,7 +27,7 @@
             @apply-to-task="handleApplyToTask"
           />
         </div>
-        <p v-else>Loading data...</p>
+        <p v-else>Učitavanje...</p>
       </div>
       <div class="campaign-image">
         <div class="image-container">
@@ -260,6 +260,7 @@ export default {
 <style scoped>
 .campaign-container {
   display: flex;
+  flex-direction: row;
   height: 100vh;
   background: #f0f8f1;
 }
@@ -326,6 +327,7 @@ p {
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
 }
+
 .donation-section {
   margin: 2rem 0;
 }
@@ -367,5 +369,54 @@ p {
 .donation-form button:disabled {
   background: #ddd;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .campaign-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .campaign-info {
+    padding: 2rem;
+  }
+
+  .raised-amount h3 {
+    font-size: 1.25rem;
+  }
+
+  .campaign-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .campaign-info p {
+    font-size: 0.875rem;
+  }
+
+  .donation-section h3 {
+    font-size: 1rem;
+  }
+
+  .donation-form input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .donation-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campaign-image {
+    height: auto;
+  }
+
+  .image-container {
+    height: 300px;
+  }
+
+  .image-container img {
+    height: 100%;
+  }
 }
 </style>
