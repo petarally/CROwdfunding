@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCYz9p_OFzW-y2v4RrhN_lGbvjvoCsYJC0",
-  authDomain: "crowdfunding-44df5.firebaseapp.com",
-  projectId: "crowdfunding-44df5",
-  storageBucket: "crowdfunding-44df5.appspot.com",
-  messagingSenderId: "96077735636",
-  appId: "1:96077735636:web:b519c42a71e299f23efd41",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
