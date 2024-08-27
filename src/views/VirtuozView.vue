@@ -67,6 +67,9 @@
         </tbody>
       </table>
     </div>
+    <button @click="deleteUser" class="delete-user-button">
+      Obriši profil
+    </button>
   </div>
 </template>
 
@@ -81,6 +84,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { firebaseApp } from "@/firebase";
 
@@ -214,6 +218,20 @@ export default {
         this.user.userStatus = 1;
       }
     },
+    async deleteUser() {
+      alert("Pokrenuto je brisanje profila...");
+      if (confirm("Jeste li sigurni da ne želite biti više s nama?")) {
+        try {
+          const userRef = doc(getFirestore(firebaseApp), "users", this.user.id);
+          await deleteDoc(userRef);
+          alert("Brisanje je uspješno!");
+          this.$router.push({ name: "HomeView" });
+        } catch (error) {
+          console.error("Pogreška:", error);
+          alert("Korisnik nije izbrisan.");
+        }
+      }
+    },
     formatDate(dateString) {
       const date = new Date(dateString);
       const day = String(date.getDate()).padStart(2, "0");
@@ -331,5 +349,57 @@ export default {
 .campaigns-table th {
   background-color: #f2f2f2;
   font-weight: bold;
+}
+
+.delete-user-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 2rem 0;
+}
+
+.delete-user-button:hover {
+  background-color: #cc0000;
+}
+
+/* Media Queries for Mobile View */
+@media (max-width: 768px) {
+  .stanje {
+    padding: 1rem;
+    align-items: center;
+  }
+
+  .cards {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .update-amount {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .amount-input {
+    margin-right: 0;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  .statusBtn {
+    padding: 0.5rem 2rem;
+  }
+
+  .campaigns-table {
+    margin: 1rem;
+    overflow-x: auto;
+  }
+
+  .campaigns-table table {
+    width: 100%;
+  }
 }
 </style>

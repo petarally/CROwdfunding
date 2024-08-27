@@ -18,6 +18,7 @@
           placeholder="Pretraži kampanje"
           class="search-bar"
         />
+        <button type="submit" class="search-button">Pretraži</button>
       </form>
     </div>
     <div class="listings-container">
@@ -108,7 +109,39 @@ export default {
 .listing-card {
   transform: scale(0.9);
 }
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
 
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 0.5rem;
+  width: 200px;
+  font-size: 1rem;
+}
+
+.search-button {
+  background-color: #ff7b00;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.search-button:hover {
+  background-color: #e66a00;
+}
 .search-bar {
   padding: 10px;
   border: 1px solid #7eb584;

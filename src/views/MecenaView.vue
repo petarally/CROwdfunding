@@ -52,6 +52,9 @@
         </tbody>
       </table>
     </div>
+    <button @click="deleteUser" class="delete-user-button">
+      Obriši profil
+    </button>
   </div>
 </template>
 
@@ -184,6 +187,20 @@ export default {
       const campaignEndDate = new Date(endDate);
       return campaignEndDate <= currentDate;
     },
+    async deleteUser() {
+      alert("Pokrenuto je brisanje profila...");
+      if (confirm("Jeste li sigurni da ne želite biti više s nama?")) {
+        try {
+          const userRef = doc(getFirestore(firebaseApp), "users", this.user.id);
+          await deleteDoc(userRef);
+          alert("Brisanje je uspješno!");
+          this.$router.push({ name: "HomeView" });
+        } catch (error) {
+          console.error("Pogreška:", error);
+          alert("Korisnik nije izbrisan.");
+        }
+      }
+    },
   },
   async mounted() {
     console.log("Component mounted");
@@ -288,6 +305,21 @@ export default {
 .campaigns-table th {
   background-color: #f2f2f2;
   font-weight: bold;
+}
+
+.delete-user-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.delete-user-button:hover {
+  background-color: #cc0000;
 }
 
 @media (max-width: 992px) {

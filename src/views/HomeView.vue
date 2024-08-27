@@ -2,7 +2,7 @@
   <div class="home">
     <div class="title">
       <h1><span>CRO</span>WDFUNDING</h1>
-      <a @click="redirectToLogin">Prijava</a>
+      <a @click="redirectToLogin" class="login-link">Prijava</a>
     </div>
     <img alt="home" src="../assets/home.png" />
     <div class="home-text">
@@ -16,6 +16,7 @@
       </p>
     </div>
     <button @click="redirectToSignup">Registracija</button>
+    <a @click="redirectToLogin" class="login-link-mobile">Prijava</a>
   </div>
 </template>
 
@@ -110,6 +111,10 @@ button:hover {
   background-color: #49704e;
 }
 
+.login-link-mobile {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .home {
     padding: 0 2rem;
@@ -145,7 +150,32 @@ button:hover {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
-    margin-bottom: 5rem;
+    margin-bottom: 1rem;
+  }
+
+  .login-link {
+    display: none;
+  }
+
+  .login-link-mobile {
+    display: block;
+    align-self: center;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #7eb584;
+    color: white !important;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 2rem;
+  }
+
+  .login-link-mobile:hover {
+    background-color: #49704e;
   }
 }
 </style>
