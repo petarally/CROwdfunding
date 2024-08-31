@@ -9,7 +9,7 @@
               <th>Korisničko ime</th>
               <th>Email</th>
               <th>Status</th>
-              <th>Amount</th>
+              <th>Iznos</th>
             </tr>
           </thead>
           <tbody>
