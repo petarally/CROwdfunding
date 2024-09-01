@@ -1,6 +1,6 @@
 # Crowdfunding
 
-Student: Petar Prenc
+Student: Petar Prenc <br>
 Fakultet informatike u Puli
 Kolegij: Programsko inženjerstvo 23/24
 Mentor: doc. dr. sc. Nikola Tanković
