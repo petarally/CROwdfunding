@@ -16,6 +16,8 @@ https://www.figma.com/design/OmhhOG2mKhevz8koipy02X/Crowdfunding?node-id=0-1&t=V
 
 ## Youtube link
 
+https://youtu.be/g4DoIjZbwQE
+
 ## Link za aplikaciju
 
 https://crowdfunding-ten-xi.vercel.app/
