@@ -1,9 +1,21 @@
-# crowdfunding
+# Crowdfunding
 
-## Project setup
+Student: Petar Prenc
+Fakultet informatike u Puli
+Kolegij: Programsko inženjerstvo 23/24
+Mentor: doc. dr. sc. Nikola Tanković
+
+## Funkcionalnosti
 ```
 npm install
 ```
+
+## Figma link
+
+## Youtube link
+
+## Link za aplikaciju
+
 
 ### Compiles and hot-reloads for development
 ```
