@@ -6,9 +6,9 @@ Kolegij: Programsko inženjerstvo 23/24  <br>
 Mentor: doc. dr. sc. Nikola Tanković
 
 ## Funkcionalnosti
-```
-npm install
-```
+- dodavanje kampanje
+- praćenje tijeka kampanje
+- donacije
 
 ## Figma link
 
