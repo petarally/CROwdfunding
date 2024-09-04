@@ -27,3 +27,8 @@ https://crowdfunding-ten-xi.vercel.app/
 git clone https://github.com/petarally/crowdfunding.git
 npm run serve
 ```
+
+## Admin login
+username: user1 <br>
+email: user1@user.com <br>
+pass: Lozinka123456
